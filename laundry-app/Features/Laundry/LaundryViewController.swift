@@ -12,6 +12,8 @@ class LaundryViewController: UIViewController {
     
     private var laundries: [Laundry] = []
     
+    private let gradientLayer = CAGradientLayer()
+    
     private lazy var collectionView: UICollectionView = {
         let flow = UICollectionViewFlowLayout()
         flow.minimumLineSpacing = 16
@@ -34,9 +36,48 @@ class LaundryViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Lavanderias"
-        view.backgroundColor = .systemBackground
         
+        title = "Lavanderias"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        navigationItem.searchController = makeSearchController()
+        navigationItem.hidesSearchBarWhenScrolling = false
+        
+        if let navBar = navigationController?.navigationBar {
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithTransparentBackground()
+            
+            let height = navBar.bounds.height
+              + view.safeAreaInsets.top
+              + 58
+            let size = CGSize(width: UIScreen.main.bounds.width, height: height)
+
+            let gradImg = UIImage.gradientImage(
+              size: size,
+              colors: [
+                .gradientTop,
+                .gradientBot
+              ],
+              cornerRadius: 24,
+              maskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            )
+            
+            appearance.backgroundImage = gradImg
+            
+            appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+            appearance.titleTextAttributes      = [.foregroundColor: UIColor.white]
+            
+            navBar.standardAppearance    = appearance
+            navBar.scrollEdgeAppearance = appearance
+            navBar.compactAppearance    = appearance
+
+        }
+
+        
+        view.backgroundColor = .systemBackground
+
+        definesPresentationContext = true
+                
         if let appDel = UIApplication.shared.delegate as? AppDelegate {
             LaundryPersistence.shared.context = appDel.persistentContainer.viewContext
         }
@@ -45,22 +86,43 @@ class LaundryViewController: UIViewController {
         laundries = LaundryPersistence.shared.getAllLaundries()
         
         setup()
-        
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.searchController = makeSearchController()
-        navigationItem.hidesSearchBarWhenScrolling = false   
-
-        definesPresentationContext = true
-
-        
-        
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        let headerHeigth: CGFloat = 200
+        
+        gradientLayer.frame = CGRect(
+            x: 0,
+            y: 0,
+            width: view.bounds.width,
+            height: headerHeigth
+        )
+    }
+            
     private func makeSearchController() -> UISearchController {
         let sc = UISearchController()
         sc.obscuresBackgroundDuringPresentation = false
         sc.hidesNavigationBarDuringPresentation = false
         sc.searchBar.placeholder = "Buscar"
+        
+        sc.searchBar.barTintColor = .clear
+        sc.searchBar.backgroundImage = UIImage()
+
+        sc.searchBar.tintColor = .gray
+
+        let tf = sc.searchBar.searchTextField
+        tf.backgroundColor = .clear
+        tf.textColor = .white
+        tf.leftView?.tintColor = .white
+        
+        tf.attributedPlaceholder = NSAttributedString(
+            string: "Buscar",
+            attributes: [
+                .foregroundColor: UIColor.white.withAlphaComponent(0.7)
+            ]
+        )
+        
         return sc
     }
 }
