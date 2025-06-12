@@ -24,10 +24,13 @@ class LaundryCardCell: UICollectionViewCell {
 
 
     // MARK: Configuration
-    func configure(with laundry: Laundry) {
+    func configure(with laundry: Laundry , delegate: AvalibilityCardDelegate?) {
         card.title = laundry.name ?? ""
         
         card.imageName = laundry.image ?? "laundryImage"
+        
+        card.avalibility.delegate = delegate
+        card.avalibility.laundry = laundry
     }
 
 }

@@ -78,7 +78,7 @@ extension LaundryViewController: UICollectionViewDataSource {
             withReuseIdentifier: LaundryCardCell.reuseIdentifier,
             for: indexPath
         ) as! LaundryCardCell
-        cell.configure(with: laundries[indexPath.item])
+        cell.configure(with: laundries[indexPath.item] , delegate : self)
         return cell
     }
 }
@@ -109,5 +109,14 @@ extension LaundryViewController: ViewCodeProtocol {
                 equalTo: view.bottomAnchor
             )
         ])
+    }
+}
+
+
+extension LaundryViewController: AvalibilityCardDelegate { 
+    func isLaundryOpen(for laundry: Laundry) -> Bool {
+        guard let open = laundry.openHour, let close = laundry.closeHour else { return false }
+        let now = Date()
+        return now >= open && now < close
     }
 }
