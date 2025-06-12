@@ -73,7 +73,7 @@ extension LaundryPersistence: LaundryPersistenceProtocol {
                 address: "Rua das Flores, 100",
                 latitude: -23.5505,
                 longitude: -46.6333,
-                openHour: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: now)!,
+                openHour: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: now)!,
                 closeHour: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: now)!,
                 details: "Self-service 24h com máquina rápida",
                 image: "laundryImage",
