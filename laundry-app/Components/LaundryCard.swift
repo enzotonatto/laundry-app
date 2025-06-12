@@ -22,7 +22,7 @@ class LaundryCard: UIView{
     lazy var label: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .label
+        label.textColor = .white
         label.font = Fonts.title1
         
         label.layer.shadowColor = UIColor.black.cgColor
