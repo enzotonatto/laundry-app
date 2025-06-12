@@ -31,6 +31,20 @@ class AvalibilityCard: UIView {
         return view
     }()
     
+    lazy var shadowContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+
+        // sombra aqui
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.25
+        view.layer.shadowOffset = CGSize(width: 0, height: 4)
+        view.layer.shadowRadius = 4
+        view.layer.masksToBounds = false // muito importante!
+        
+        return view
+    }()
+    
     lazy var bol: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 8
@@ -86,31 +100,30 @@ class AvalibilityCard: UIView {
 
 extension AvalibilityCard: ViewCodeProtocol {
     func addSubViews() {
-      addSubview(backGround)
-      addSubview(stack)
+        addSubview(shadowContainer)
+        shadowContainer.addSubview(backGround)
+        addSubview(stack)
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-        
-                 backGround.heightAnchor.constraint(equalToConstant: 28),
+            shadowContainer.topAnchor.constraint(equalTo: topAnchor),
+            shadowContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
+            shadowContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            backGround.topAnchor.constraint(equalTo: shadowContainer.topAnchor),
+            backGround.leadingAnchor.constraint(equalTo: shadowContainer.leadingAnchor),
+            backGround.trailingAnchor.constraint(equalTo: shadowContainer.trailingAnchor),
+            backGround.bottomAnchor.constraint(equalTo: shadowContainer.bottomAnchor),
+            backGround.heightAnchor.constraint(equalToConstant: 28),
 
-                 backGround.topAnchor.constraint(equalTo: topAnchor),
-                 backGround.leadingAnchor.constraint(equalTo: leadingAnchor),
-                 backGround.bottomAnchor.constraint(equalTo: bottomAnchor),
-                 
-              
-                 stack.centerYAnchor.constraint(equalTo: backGround.centerYAnchor),
-                 stack.leadingAnchor.constraint(equalTo: backGround.leadingAnchor, constant: 8),
-                 stack.trailingAnchor.constraint(equalTo: backGround.trailingAnchor, constant: -8),
-                 
-         
-                 bol.widthAnchor.constraint(equalToConstant: 16),
-                 bol.heightAnchor.constraint(equalToConstant: 16),
-               ])
-               
-               backGround.setContentHuggingPriority(.required, for: .horizontal)
-               backGround.setContentCompressionResistancePriority(.required, for: .horizontal)
+            stack.centerYAnchor.constraint(equalTo: backGround.centerYAnchor),
+            stack.leadingAnchor.constraint(equalTo: backGround.leadingAnchor, constant: 8),
+            stack.trailingAnchor.constraint(equalTo: backGround.trailingAnchor, constant: -8),
+
+            bol.widthAnchor.constraint(equalToConstant: 16),
+            bol.heightAnchor.constraint(equalToConstant: 16),
+        ])
     
     }
     
