@@ -52,7 +52,7 @@ class TabBar: UITabBarController {
         
         let apparence = UITabBarAppearance()
         apparence.configureWithOpaqueBackground()
-        apparence.backgroundColor = .tabBarBackground
+        apparence.backgroundColor = .white
         apparence.shadowColor = .lightGray
         apparence.shadowImage = nil
         tabBar.standardAppearance = apparence

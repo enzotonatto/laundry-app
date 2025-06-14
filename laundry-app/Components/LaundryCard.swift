@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class LaundryCard: UIView{
+class LaundryCard: UIView {
     lazy var avalibility: AvalibilityCard = {
         let view = AvalibilityCard()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -88,7 +88,6 @@ class LaundryCard: UIView{
     }
 }
 
-
 extension LaundryCard: ViewCodeProtocol {
     func addSubViews() {
         addSubview(imageView)
@@ -110,12 +109,7 @@ extension LaundryCard: ViewCodeProtocol {
             overlayView.leadingAnchor.constraint(equalTo: imageView.leadingAnchor),
             overlayView.trailingAnchor.constraint(equalTo: imageView.trailingAnchor),
             overlayView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor),
-            
-//            blurEffect.topAnchor.constraint(equalTo: label.topAnchor),
-//            blurEffect.leadingAnchor.constraint(equalTo: imageView.leadingAnchor),
-//            blurEffect.trailingAnchor.constraint(equalTo: imageView.trailingAnchor),
-//            blurEffect.bottomAnchor.constraint(equalTo: imageView.bottomAnchor),
-            
+                        
             label.leadingAnchor.constraint(equalTo: self.leadingAnchor ,constant: 16),
             label.bottomAnchor.constraint(equalTo: self.bottomAnchor , constant: -16),
             

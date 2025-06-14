@@ -12,7 +12,6 @@ protocol AvalibilityCardDelegate: AnyObject {
     func isLaundryOpen(for laundry: Laundry) -> Bool
 }
 
-
 class AvalibilityCard: UIView {
     
     weak var delegate: AvalibilityCardDelegate?
@@ -48,9 +47,8 @@ class AvalibilityCard: UIView {
     lazy var bol: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 8
-        view.backgroundColor = UIColor(named: "OpenCircle")
+        view.backgroundColor = .accent
         
-        //Shadow Chat
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOpacity = 0.25
         view.layer.shadowOffset = CGSize(width: 0, height: 4)
@@ -76,12 +74,10 @@ class AvalibilityCard: UIView {
         return stack
     }()
     
-    
-    //funcao para ver colocar a Cor de aberto ou fechado
     func updateStatus() {
         guard let laundry = laundry else { return }
         let isOpen = delegate?.isLaundryOpen(for: laundry) ?? false
-        bol.backgroundColor = isOpen ? UIColor(named: "OpenCircle") : UIColor(named: "ClosedCircle")
+        bol.backgroundColor = isOpen ? .accent: .lavanda
         label.text = isOpen ? "Peça agora" : "Agende"
     }
     
@@ -94,8 +90,6 @@ class AvalibilityCard: UIView {
         super.init(coder: coder)
         setup()
     }
-    
-    
 }
 
 extension AvalibilityCard: ViewCodeProtocol {
@@ -129,5 +123,3 @@ extension AvalibilityCard: ViewCodeProtocol {
     
     
 }
-
-
