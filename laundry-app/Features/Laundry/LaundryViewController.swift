@@ -55,8 +55,8 @@ class LaundryViewController: UIViewController {
             let gradImg = UIImage.gradientImage(
               size: size,
               colors: [
-                .gradientTop,
-                .gradientBot
+                .accent,
+                .lavanda
               ],
               cornerRadius: 24,
               maskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]

@@ -11,7 +11,6 @@ class LaundryCardCell: UICollectionViewCell {
     static let reuseIdentifier = "LaundryCardCell"
     private let card = LaundryCard()
     
-    // MARK: Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -21,9 +20,6 @@ class LaundryCardCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-
-
-    // MARK: Configuration
     func configure(with laundry: Laundry , delegate: AvalibilityCardDelegate?) {
         card.title = laundry.name ?? ""
         
@@ -33,7 +29,7 @@ class LaundryCardCell: UICollectionViewCell {
         card.avalibility.laundry = laundry
     }
 
-}
+    }
 
 extension LaundryCardCell: ViewCodeProtocol {
     func addSubViews() {
