@@ -34,6 +34,7 @@ class LaundryViewController: UIViewController {
         return cv
     }()
 
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -146,9 +147,9 @@ extension LaundryViewController: UICollectionViewDataSource {
 }
 
 // MARK: UICollectionViewDelegate
-extension LaundryViewController: UICollectionViewDelegate {
-    // se precisar, trate didSelect etc.
-}
+//extension LaundryViewController: UICollectionViewDelegate {
+//    // se precisar, trate didSelect etc.
+//}
 
 extension LaundryViewController: ViewCodeProtocol {
     func addSubViews() {
@@ -180,5 +181,20 @@ extension LaundryViewController: AvalibilityCardDelegate {
         guard let open = laundry.openHour, let close = laundry.closeHour else { return false }
         let now = Date()
         return now >= open && now < close
+    }
+}
+extension LaundryViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // 1. Obtém a lavanderia selecionada
+        let selectedLaundry = laundries[indexPath.item]
+
+        // 2. Cria o detail view controller
+        let detailVC = LaundryDetailViewController(laundry: selectedLaundry)
+
+        // 3. Navega para ele
+        navigationController?.pushViewController(detailVC, animated: true)
+
+        // 4. Opcional: desselciona a célula
+        collectionView.deselectItem(at: indexPath, animated: true)
     }
 }
