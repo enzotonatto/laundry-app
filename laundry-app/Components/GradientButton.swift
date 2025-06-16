@@ -13,12 +13,12 @@ class GradientButton: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        button.translatesAutoresizingMaskIntoConstraints = false
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .regular)
         let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
         let image = UIImage(systemName: iconName, withConfiguration: config)
         button.setImage(isShowingIcon ? image : nil, for: .normal)
         button.tintColor = .white
+//        button.setGradientColors([UIColor(named: "startGradient"), UIColor(named: "endGradient")])
         button.contentHorizontalAlignment = .center
         button.adjustsImageWhenHighlighted = false
         button.contentVerticalAlignment = .center
