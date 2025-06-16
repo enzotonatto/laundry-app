@@ -143,10 +143,6 @@ extension LaundryViewController: UICollectionViewDataSource {
 }
 
 // MARK: UICollectionViewDelegate
-//extension LaundryViewController: UICollectionViewDelegate {
-//    // se precisar, trate didSelect etc.
-//}
-
 extension LaundryViewController: ViewCodeProtocol {
     func addSubViews() {
         view.addSubview(collectionView)
