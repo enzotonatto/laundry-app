@@ -2,30 +2,38 @@ import UIKit
 import Foundation
 
 
-class GradientButton: UIView {
+class GradientButton: UIButton {
     
     private let gradientLayer = CAGradientLayer()
     
-    let iconName: String = "chevron.right"
-        
-    lazy var button: UIButton = {
-        var button = UIButton() 
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .regular)
-        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
-        let image = UIImage(systemName: iconName, withConfiguration: config)
-        button.setImage(isShowingIcon ? image : nil, for: .normal)
-        button.tintColor = .white
-//        button.setGradientColors([UIColor(named: "startGradient"), UIColor(named: "endGradient")])
-        button.contentHorizontalAlignment = .center
-        button.adjustsImageWhenHighlighted = false
-        button.contentVerticalAlignment = .center
-        button.semanticContentAttribute = .forceRightToLeft
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: -10)
-
-        return button
+    lazy var label: UILabel = {
+        let label = UILabel()
+        label.text = ""
+        label.textColor = .white
+        label.font = Fonts.title3
+        return label
+    }()
+    
+    lazy var image: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(systemName: "chevron.right")
+        image.tintColor = .white
+        return image
+    }()
+    
+    lazy var stack: UIStackView = {
+        var stack = UIStackView(arrangedSubviews: [label, image])
+        stack.axis = .horizontal
+        stack.spacing = 10
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+    
+    lazy var background: GradientView = {
+        let view = GradientView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.masksToBounds = true
+        return view
     }()
     
     var isShowingIcon: Bool = true {
@@ -36,32 +44,26 @@ class GradientButton: UIView {
     
     var font: UIFont? {
         didSet {
-            button.titleLabel?.font = font
+            label.font = font
         }
     }
     
     var title: String? {
         didSet {
-            button.setTitle(title, for: .normal)
+            label.text = title
         }
     }
     
-    
-
-
-    
     override init (frame: CGRect) {
         super.init(frame: frame)
-        setup()
         layer.insertSublayer(gradientLayer, at: 0)
+        setGradientColors([.startGradient, .endGradient])
+        setup()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
-    
     
     
     override func layoutSubviews() {
@@ -74,34 +76,39 @@ class GradientButton: UIView {
     
     func updateIconVisibility(){
         if isShowingIcon {
-            button.setImage(UIImage(systemName: iconName), for: .normal)
-            button.semanticContentAttribute = .forceRightToLeft
+            image.isHidden = false
         } else {
-            button.setImage(UIImage(systemName: ""), for: .normal)
+            image.isHidden = true
         }
     }
+
     
     func setGradientColors(_ colors: [UIColor]) {
         gradientLayer.colors = colors.map { $0.cgColor }
         gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
         gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
     }
+        
 }
 
 extension GradientButton: ViewCodeProtocol {
     func addSubViews() {
-        addSubview(button)
+        addSubview(background)
+        background.addSubview(stack)
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            button.heightAnchor.constraint(equalToConstant: 57),
-            button.widthAnchor.constraint(equalToConstant: 361),
+            background.topAnchor.constraint(equalTo: self.topAnchor),
+            background.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            background.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            background.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             
-            button.topAnchor.constraint(equalTo: self.topAnchor),
-            button.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            button.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            button.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            background.heightAnchor.constraint(equalToConstant: 57),
+            background.widthAnchor.constraint(equalToConstant: 361),
+            
+            stack.centerXAnchor.constraint(equalTo: background.centerXAnchor),
+            stack.centerYAnchor.constraint(equalTo: background.centerYAnchor),
         ])
     }
     
@@ -123,3 +130,4 @@ class GradientView: UIView {
         gradientLayer.endPoint = CGPoint(x: 0.5, y: 1)
     }
 }
+
