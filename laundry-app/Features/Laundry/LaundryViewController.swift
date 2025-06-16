@@ -42,52 +42,49 @@ class LaundryViewController: UIViewController {
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.searchController = makeSearchController()
         navigationItem.hidesSearchBarWhenScrolling = false
+
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
         
         if let navBar = navigationController?.navigationBar {
-            let appearance = UINavigationBarAppearance()
-            appearance.configureWithTransparentBackground()
-            
             let height = navBar.bounds.height
-              + view.safeAreaInsets.top
-              + 58
-            let size = CGSize(width: UIScreen.main.bounds.width, height: height)
-
-            let gradImg = UIImage.gradientImage(
-              size: size,
-              colors: [
-                .accent,
-                .lavanda
-              ],
-              cornerRadius: 24,
-              maskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+                      + view.safeAreaInsets.top
+                      + 58
+            let size = CGSize(
+                width: UIScreen.main.bounds.width,
+                height: height
             )
-            
+            let gradImg = UIImage.gradientImage(
+                size: size,
+                colors: [.accent, .lavanda],
+                cornerRadius: 24,
+                maskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            )
             appearance.backgroundImage = gradImg
-            
-            appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-            appearance.titleTextAttributes      = [.foregroundColor: UIColor.white]
-            
-            navBar.standardAppearance    = appearance
-            navBar.scrollEdgeAppearance = appearance
-            navBar.compactAppearance    = appearance
-
         }
-
         
-        view.backgroundColor = .systemBackground
+        appearance.largeTitleTextAttributes = [
+            .foregroundColor: UIColor.white
+        ]
+        appearance.titleTextAttributes = [
+            .foregroundColor: UIColor.white
+        ]
 
+        navigationItem.standardAppearance    = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+        navigationItem.compactAppearance    = appearance
+
+        view.backgroundColor = .systemBackground
         definesPresentationContext = true
-                
+        
         if let appDel = UIApplication.shared.delegate as? AppDelegate {
             LaundryPersistence.shared.context = appDel.persistentContainer.viewContext
         }
-        
         LaundryPersistence.shared.mockData()
         laundries = LaundryPersistence.shared.getAllLaundries()
-        
         setup()
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         let headerHeigth: CGFloat = 200
@@ -146,10 +143,6 @@ extension LaundryViewController: UICollectionViewDataSource {
 }
 
 // MARK: UICollectionViewDelegate
-extension LaundryViewController: UICollectionViewDelegate {
-    // se precisar, trate didSelect etc.
-}
-
 extension LaundryViewController: ViewCodeProtocol {
     func addSubViews() {
         view.addSubview(collectionView)
@@ -174,11 +167,26 @@ extension LaundryViewController: ViewCodeProtocol {
     }
 }
 
-
 extension LaundryViewController: AvalibilityCardDelegate { 
     func isLaundryOpen(for laundry: Laundry) -> Bool {
         guard let open = laundry.openHour, let close = laundry.closeHour else { return false }
         let now = Date()
         return now >= open && now < close
+    }
+}
+
+extension LaundryViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // 1. Get the selected laundry
+        let selectedLaundry = laundries[indexPath.item]
+
+        // 2. Create the detail view controller
+        let detailVC = LaundryDetailViewController(laundry: selectedLaundry)
+
+        // 3. Navigate to it
+        navigationController?.pushViewController(detailVC, animated: true)
+
+        // 4. Optional: deselect the cell
+        collectionView.deselectItem(at: indexPath, animated: true)
     }
 }
