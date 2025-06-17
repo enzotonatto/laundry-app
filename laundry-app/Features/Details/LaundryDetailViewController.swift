@@ -114,6 +114,7 @@ class LaundryDetailViewController: UIViewController {
         button.title = "Iniciar Pedido"
         button.isShowingIcon = false
         button.setGradientColors([.startGradient, .endGradient])
+        button.addTarget(self, action: #selector(goToClothingSelectionVC), for: .touchUpInside)
         return button
     }()
     
@@ -132,6 +133,7 @@ class LaundryDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.isNavigationBarHidden = true
+        navigationItem.backButtonTitle = "Voltar"
         view.backgroundColor = .systemBackground
         setup()
     }
@@ -141,6 +143,15 @@ class LaundryDetailViewController: UIViewController {
         navigationController?.popViewController(animated: true)
         
     }
+    
+    @objc func goToClothingSelectionVC() {
+    
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        let clothingSelectionVC = ClothingSelectionViewController()
+        navigationController?.pushViewController(clothingSelectionVC, animated: true)
+    }
+    
+    
 }
 
 extension LaundryDetailViewController: ViewCodeProtocol {
