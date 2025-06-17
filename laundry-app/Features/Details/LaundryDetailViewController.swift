@@ -6,8 +6,14 @@
 //
 
 import UIKit
+protocol LaundryDetailViewControllerDelegate: AnyObject {
+    func laundryDetailViewControllerDidUpdate(_ controller: LaundryDetailViewController)
+}
 
 class LaundryDetailViewController: UIViewController {
+    
+    weak var delegate: LaundryDetailViewControllerDelegate?
+    
     private let laundry: Laundry
     
     lazy var returnButton: ReturnButton = {
@@ -26,6 +32,8 @@ class LaundryDetailViewController: UIViewController {
     lazy var availabilityCard: AvalibilityCard = {
         var card = AvalibilityCard()
         card.translatesAutoresizingMaskIntoConstraints = false
+        card.delegate = self
+        card.laundry = laundry 
         return card
     }()
     
@@ -188,4 +196,11 @@ extension LaundryDetailViewController: ViewCodeProtocol {
         ])
     }
     
+}
+extension LaundryDetailViewController: AvalibilityCardDelegate {
+    func isLaundryOpen(for laundry: Laundry) -> Bool {
+        guard let open = laundry.openHour, let close = laundry.closeHour else { return false }
+        let now = Date()
+        return now >= open && now < close
+    }
 }
