@@ -143,10 +143,6 @@ extension LaundryViewController: UICollectionViewDataSource {
 }
 
 // MARK: UICollectionViewDelegate
-//extension LaundryViewController: UICollectionViewDelegate {
-//    // se precisar, trate didSelect etc.
-//}
-
 extension LaundryViewController: ViewCodeProtocol {
     func addSubViews() {
         view.addSubview(collectionView)
@@ -181,16 +177,16 @@ extension LaundryViewController: AvalibilityCardDelegate {
 
 extension LaundryViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // 1. Obtém a lavanderia selecionada
+        // 1. Get the selected laundry
         let selectedLaundry = laundries[indexPath.item]
 
-        // 2. Cria o detail view controller
+        // 2. Create the detail view controller
         let detailVC = LaundryDetailViewController(laundry: selectedLaundry)
 
-        // 3. Navega para ele
+        // 3. Navigate to it
         navigationController?.pushViewController(detailVC, animated: true)
 
-        // 4. Opcional: desselciona a célula
+        // 4. Optional: deselect the cell
         collectionView.deselectItem(at: indexPath, animated: true)
     }
 }

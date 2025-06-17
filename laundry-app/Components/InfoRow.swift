@@ -15,7 +15,7 @@ class InfoRow: UIView {
     iv.translatesAutoresizingMaskIntoConstraints = false
     iv.tintColor = .accent
     iv.backgroundColor = .white
-    iv.layer.cornerRadius = 24
+    iv.layer.cornerRadius = 32
     iv.clipsToBounds = true
     return iv
   }()
