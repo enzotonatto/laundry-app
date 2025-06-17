@@ -16,7 +16,6 @@ class LaundryDetailViewController: UIViewController {
         return button
     }()
     
-    
     lazy var laundryImage: UIImageView = {
         var image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -29,7 +28,6 @@ class LaundryDetailViewController: UIViewController {
         card.translatesAutoresizingMaskIntoConstraints = false
         return card
     }()
-    
     
     lazy var detailsContainer: UIView = {
         var view = UIView()
@@ -66,6 +64,50 @@ class LaundryDetailViewController: UIViewController {
         return stack
     }()
     
+    lazy var adressInfoRow: InfoRow = {
+        let icon = UIImage(systemName: "storefront.circle.fill")!
+        return InfoRow(icon: icon, title: "ENDEREÇO", text: laundry.address ?? "Sem endereço")
+    }()
+    
+    lazy var hoursInfoRow: InfoRow = {
+        let icon = UIImage(named: "customStopwatch")!
+        
+        let hoursText: String
+        if let open = laundry.openHour, let close = laundry.closeHour {
+          let formatter = DateFormatter()
+          formatter.dateFormat = "H:mm"
+          formatter.locale = Locale.current
+          let openStr  = formatter.string(from: open)
+          let closeStr = formatter.string(from: close)
+          hoursText = "\(openStr) às \(closeStr)"
+        } else {
+          hoursText = "Horário indisponível"
+        }
+        
+        return InfoRow(icon: icon, title: "HORÁRIOS", text: hoursText)
+    }()
+    
+    lazy var paymentInfoRow: InfoRow = {
+        let icon = UIImage(systemName: "creditcard.circle.fill")!
+        
+        let paymentIcons: [UIImage] = laundry.paymentMethod!
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .compactMap { PaymentMethod(rawValue: $0) }
+            .compactMap { UIImage(named: $0.imageName) }
+
+        
+        return InfoRow(icon: icon, title: "MÉTODOS DE PAGAMENTO", images: paymentIcons)
+    }()
+    
+    lazy var infoStack: UIStackView = {
+        var stack = UIStackView(arrangedSubviews: [adressInfoRow, hoursInfoRow, paymentInfoRow])
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .vertical
+        stack.spacing = 16
+        return stack
+    }()
+    
     lazy var startOrderButton: GradientButton = {
         let button = GradientButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -74,7 +116,6 @@ class LaundryDetailViewController: UIViewController {
         button.setGradientColors([.startGradient, .endGradient])
         return button
     }()
-    
     
     init(laundry: Laundry) {
         self.laundry = laundry
@@ -87,7 +128,6 @@ class LaundryDetailViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -110,6 +150,7 @@ extension LaundryDetailViewController: ViewCodeProtocol {
         view.addSubview(availabilityCard)
         view.addSubview(detailsContainer)
         view.addSubview(laundryStack)
+        view.addSubview(infoStack)
         view.addSubview(startOrderButton)
     }
     
@@ -126,8 +167,6 @@ extension LaundryDetailViewController: ViewCodeProtocol {
             availabilityCard.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             availabilityCard.bottomAnchor.constraint(equalTo: detailsContainer.topAnchor, constant: -16),
             
-            
-            
             detailsContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             detailsContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             detailsContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -137,6 +176,10 @@ extension LaundryDetailViewController: ViewCodeProtocol {
             laundryStack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             laundryStack.topAnchor.constraint(equalTo: detailsContainer.topAnchor, constant: 24),
             
+            infoStack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            infoStack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            infoStack.topAnchor.constraint(equalTo: laundryStack.bottomAnchor, constant: 16),
+            
             
             
             startOrderButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -144,6 +187,5 @@ extension LaundryDetailViewController: ViewCodeProtocol {
             startOrderButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
         ])
     }
-    
     
 }

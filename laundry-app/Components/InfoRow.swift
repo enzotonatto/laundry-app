@@ -13,17 +13,16 @@ class InfoRow: UIView {
     let iv = UIImageView()
     iv.contentMode = .scaleAspectFit
     iv.translatesAutoresizingMaskIntoConstraints = false
-    iv.tintColor = .white
-    iv.backgroundColor = .systemPurple
-    iv.layer.cornerRadius = 24
+    iv.tintColor = .accent
+    iv.backgroundColor = .white
+    iv.layer.cornerRadius = 32
     iv.clipsToBounds = true
     return iv
   }()
 
   private let titleLabel: UILabel = {
     let lbl = UILabel()
-    lbl.font = .systemFont(ofSize: 14, weight: .bold)
-    lbl.textColor = .black
+    lbl.font = Fonts.caption2
     lbl.translatesAutoresizingMaskIntoConstraints = false
     return lbl
   }()
@@ -59,34 +58,32 @@ class InfoRow: UIView {
   }
 
   convenience init(icon: UIImage, title: String, images: [UIImage]) {
-    let imgs = images.map { img -> UIImageView in
-      let iv = UIImageView(image: img)
-      iv.contentMode = .scaleAspectFit
-      iv.translatesAutoresizingMaskIntoConstraints = false
-      iv.layer.cornerRadius = 8
-      iv.layer.borderWidth = 1
-      iv.layer.borderColor = UIColor.systemGray4.cgColor
-      iv.clipsToBounds = true
-      NSLayoutConstraint.activate([
-        iv.widthAnchor.constraint(equalToConstant: 48),
-        iv.heightAnchor.constraint(equalToConstant: 32)
-      ])
-      return iv
-    }
-    let stack = UIStackView(arrangedSubviews: imgs)
-    stack.axis = .horizontal
-    stack.spacing = 8
-    stack.alignment = .center
-    stack.translatesAutoresizingMaskIntoConstraints = false
-    self.init(icon: icon, title: title, contentView: stack)
+      let imgs = images.map { img -> UIImageView in
+        let iv = UIImageView(image: img)
+        iv.contentMode = .scaleAspectFit
+        iv.translatesAutoresizingMaskIntoConstraints = false
+        iv.heightAnchor.constraint(lessThanOrEqualToConstant: 32).isActive = true
+        let ratio = img.size.width / img.size.height
+        iv.widthAnchor.constraint(equalTo: iv.heightAnchor, multiplier: ratio).isActive = true
+        return iv
+      }
+
+      let stack = UIStackView(arrangedSubviews: imgs)
+      stack.axis = .horizontal
+      stack.spacing = 8
+      stack.alignment = .center
+      stack.distribution = .fillProportionally
+      stack.translatesAutoresizingMaskIntoConstraints = false
+
+      self.init(icon: icon, title: title, contentView: stack)
   }
 
   @available(*, unavailable)
   required init?(coder: NSCoder) { fatalError() }
 
   private func setupView() {
-    backgroundColor = .gray
-    layer.cornerRadius = 16
+    backgroundColor = .white
+    layer.cornerRadius = 32
     translatesAutoresizingMaskIntoConstraints = false
   }
 }
