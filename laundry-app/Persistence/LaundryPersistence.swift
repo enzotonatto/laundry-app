@@ -78,7 +78,7 @@ extension LaundryPersistence: LaundryPersistenceProtocol {
                 details: "Self-service 24h com máquina rápida",
                 image: "laundryImage",
                 phoneNumber: "5551984229066",
-                paymentMethod: "Cartão, Pix"
+                paymentMethod: "pix"
             )
 
             addNewLaundry(
@@ -91,7 +91,7 @@ extension LaundryPersistence: LaundryPersistenceProtocol {
                 details: "Lavagem premium e entrega express",
                 image: "laundryImage",
                 phoneNumber: "5551983385200",
-                paymentMethod: "Dinheiro, Cartão"
+                paymentMethod: "pix, money"
             )
 
             addNewLaundry(
@@ -104,7 +104,7 @@ extension LaundryPersistence: LaundryPersistenceProtocol {
                 details: "Atendimento expresso e eco-friendly",
                 image: "laundryImage",
                 phoneNumber: "5551998292204",
-                paymentMethod: "Pix, Cartão"
+                paymentMethod: "pix, money, card"
             )
 
             addNewLaundry(
@@ -117,7 +117,7 @@ extension LaundryPersistence: LaundryPersistenceProtocol {
                 details: "Entrega grátis em até 24h",
                 image: "laundryImage",
                 phoneNumber: "5551996644448",
-                paymentMethod: "Cartão, Dinheiro"
+                paymentMethod: "pix"
             )
             
             save()

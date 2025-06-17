@@ -19,7 +19,7 @@ struct Fonts {
     static let subheadline = UIFont(name: "SFProText-Regular", size: 15)!
     static let footnote = UIFont(name: "SFProText-Regular", size: 13)!
     static let caption1 = UIFont(name: "SFProText-Regular", size: 12)!
-    static let caption2 = UIFont(name: "SFProText-Regular", size: 11)!
+    static let caption2 = UIFont(name: "SFProText-Bold", size: 11)!
 
 }
 
