@@ -151,7 +151,6 @@ class LaundryDetailViewController: UIViewController {
         navigationController?.pushViewController(clothingSelectionVC, animated: true)
     }
     
-    
 }
 
 extension LaundryDetailViewController: ViewCodeProtocol {

@@ -8,6 +8,12 @@
 import UIKit
 
 class ClothingSelectionViewController: UIViewController {
+    
+    lazy var returnButton: ReturnButton = {
+        let button = ReturnButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
 
     lazy var nextButton: GradientButton = {
         let button = GradientButton()

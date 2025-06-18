@@ -3,14 +3,14 @@ import UIKit
 class GradientButton: UIButton {
     
     private let gradientLayer = CAGradientLayer()
-    private let tapAreaPadding: CGFloat = 10 // Extra padding to ensure tappability
+    private let tapAreaPadding: CGFloat = 10
     
     lazy var label: UILabel = {
         let label = UILabel()
         label.text = ""
         label.textColor = .white
         label.font = Fonts.title3
-        label.isUserInteractionEnabled = false // Disable interaction
+        label.isUserInteractionEnabled = false
         return label
     }()
     
@@ -18,7 +18,7 @@ class GradientButton: UIButton {
         let image = UIImageView()
         image.image = UIImage(systemName: "chevron.right")
         image.tintColor = .white
-        image.isUserInteractionEnabled = false // Disable interaction
+        image.isUserInteractionEnabled = false
         return image
     }()
     
@@ -27,7 +27,7 @@ class GradientButton: UIButton {
         stack.axis = .horizontal
         stack.spacing = 10
         stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.isUserInteractionEnabled = false // Disable interaction
+        stack.isUserInteractionEnabled = false
         return stack
     }()
     
@@ -96,7 +96,7 @@ extension GradientButton: ViewCodeProtocol {
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            heightAnchor.constraint(equalToConstant: 57), // Maintain original height
+            heightAnchor.constraint(equalToConstant: 57),
             stack.centerXAnchor.constraint(equalTo: centerXAnchor),
             stack.centerYAnchor.constraint(equalTo: centerYAnchor),
             
