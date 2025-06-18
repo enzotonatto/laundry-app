@@ -15,6 +15,11 @@ class ReturnButton: UIButton {
         let label = UILabel()
         label.text = "Voltar"
         label.textColor = .white
+        label.layer.shadowColor = UIColor.black.cgColor
+        label.layer.shadowOpacity = 0.35
+        label.layer.shadowOffset = CGSize(width: 0, height: 4)
+        label.layer.shadowRadius = 4
+        label.layer.masksToBounds = false
         return label
     }()
     
@@ -47,13 +52,22 @@ class ReturnButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
-        
+        configureShadow()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func configureShadow() {
+        translatesAutoresizingMaskIntoConstraints = false
+
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.35
+        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowRadius = 4
+        layer.masksToBounds = false
+    }
 }
 
 extension ReturnButton: ViewCodeProtocol {
