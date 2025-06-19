@@ -87,6 +87,8 @@ class ClothingSelectionViewController: UIViewController {
         title = "Peças"
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = false
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
         
         setup()
     
@@ -106,6 +108,10 @@ class ClothingSelectionViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: false)
         let orderSummaryVC = OrderSummaryViewController()
         navigationController?.pushViewController(orderSummaryVC, animated: true)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
     
 }
