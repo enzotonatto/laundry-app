@@ -59,7 +59,7 @@ class ClothingSelectionViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.title = "Próximo"
         button.isShowingIcon = true
-        
+        button.addTarget(self, action: #selector(goToOrderSummaryVC), for: .touchUpInside)
         return button
     }()
     
@@ -99,6 +99,15 @@ class ClothingSelectionViewController: UIViewController {
             navigationController?.setNavigationBarHidden(true, animated: animated)
         }
     }
+    
+    
+    @objc func goToOrderSummaryVC() {
+    
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        let orderSummaryVC = OrderSummaryViewController()
+        navigationController?.pushViewController(orderSummaryVC, animated: true)
+    }
+    
 }
 
 extension ClothingSelectionViewController: ViewCodeProtocol {
