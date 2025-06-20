@@ -1,6 +1,7 @@
 import UIKit
 
 class ClothingSelectionViewController: UIViewController {
+    private var clothingSelectors: [ClothesCouting] = []
     
     lazy var returnButton: ReturnButton = {
         let button = ReturnButton()
@@ -12,6 +13,7 @@ class ClothingSelectionViewController: UIViewController {
         let counter = ClothesCouting()
         counter.translatesAutoresizingMaskIntoConstraints = false
         counter.title = "Camiseta"
+        clothingSelectors.append(counter)
         return counter
     }()
     
@@ -20,6 +22,7 @@ class ClothingSelectionViewController: UIViewController {
         counter.translatesAutoresizingMaskIntoConstraints = false
         counter.title = "Casaco"
         counter.imageName = "jacket.fill"
+        clothingSelectors.append(counter)
         return counter
     }()
         
@@ -28,6 +31,7 @@ class ClothingSelectionViewController: UIViewController {
         counter.translatesAutoresizingMaskIntoConstraints = false
         counter.title = "Terno"
         counter.imageName = "coat.fill"
+        clothingSelectors.append(counter)
         return counter
     }()
     
@@ -36,6 +40,7 @@ class ClothingSelectionViewController: UIViewController {
         counter.translatesAutoresizingMaskIntoConstraints = false
         counter.title = "Lençol"
         counter.imageName = "bed.double.fill"
+        clothingSelectors.append(counter)
         return counter
     }()
     
@@ -44,6 +49,7 @@ class ClothingSelectionViewController: UIViewController {
         counter.translatesAutoresizingMaskIntoConstraints = false
         counter.title = "Calça"
         counter.imageName = "pants"
+        clothingSelectors.append(counter)
         return counter
     }()
     
@@ -73,6 +79,11 @@ class ClothingSelectionViewController: UIViewController {
         
         return label
     }()
+    
+    func checkCounts() {
+            let allEmpty = clothingSelectors.allSatisfy { $0.count == 0 }
+            nextButton.isActive = !allEmpty
+        }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,7 +92,8 @@ class ClothingSelectionViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
         
         setup()
-        hideKeyboardWhenTappedAround()  
+        clothingSelectors.forEach { $0.delegate = self }
+        hideKeyboardWhenTappedAround()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -124,6 +136,12 @@ class ClothingSelectionViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: false)
         let addressVC = AddressViewController()
         navigationController?.pushViewController(addressVC, animated: true)
+    }
+}
+
+extension ClothingSelectionViewController: ClothesCoutingDelegate {
+    func counterDidChange(count: Int, for counter: ClothesCouting) {
+        checkCounts()
     }
 }
 
