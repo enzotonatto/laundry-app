@@ -10,6 +10,7 @@ import UIKit
 final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFieldDelegate {
     
     // MARK: - UI Components
+    private let progress = StepProgressView()
     
     private lazy var labelAddress: UILabel = {
         let label = UILabel()
@@ -75,6 +76,7 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
         title = "Endereço"
         view.backgroundColor = .systemBackground
         navigationItem.backButtonTitle = "Voltar"
+        progress.translatesAutoresizingMaskIntoConstraints = false
         
         setup()
         configureFields()
@@ -96,7 +98,7 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
          complementComponent].forEach {
             $0.textField.delegate = self
         }
-
+        
     }
     
     @objc private func dismissKeyboard() {
@@ -178,12 +180,18 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
             cidadeComponent,
             numberComponent,
             complementComponent,
-            button
+            button,
+            progress,
         ].forEach(view.addSubview)
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
+            
+            progress.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            progress.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            progress.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            progress.heightAnchor.constraint(equalToConstant: 4),
             // Divider
             dividerLine.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             dividerLine.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -191,7 +199,7 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
             dividerLine.heightAnchor.constraint(equalToConstant: 0.5),
             
             // Label
-            labelAddress.topAnchor.constraint(equalTo: dividerLine.bottomAnchor, constant: 16),
+            labelAddress.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 16),
             labelAddress.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             labelAddress.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
@@ -231,5 +239,10 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
             button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             button.heightAnchor.constraint(equalToConstant: 56),
         ])
+        progress.numberOfSteps = 4
+        progress.setStep(2, animated: false)
+    }
+    func avançouParaPasso(_ passo: Int) {
+        progress.setStep(passo, animated: true)
     }
 }

@@ -2,6 +2,8 @@ import UIKit
 
 class ClothingSelectionViewController: UIViewController {
     
+    private let progress = StepProgressView()
+    
     lazy var returnButton: ReturnButton = {
         let button = ReturnButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -79,15 +81,21 @@ class ClothingSelectionViewController: UIViewController {
         title = "Peças"
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = false
+        progress.translatesAutoresizingMaskIntoConstraints = false
         
         setup()
         hideKeyboardWhenTappedAround()  
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+      
+    }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if isMovingFromParent {
             navigationController?.setNavigationBarHidden(true, animated: animated)
+            
         }
     }
     
@@ -149,10 +157,15 @@ extension ClothingSelectionViewController: ViewCodeProtocol {
         view.addSubview(clothingSelector3)
         view.addSubview(clothingSelector4)
         view.addSubview(clothingSelector5)
+        view.addSubview(progress)
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
+            progress.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            progress.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            progress.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            progress.heightAnchor.constraint(equalToConstant: 4),
             
             dividerLine.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             dividerLine.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -163,7 +176,7 @@ extension ClothingSelectionViewController: ViewCodeProtocol {
             nextButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             nextButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             
-            instructionsLabel.topAnchor.constraint(equalTo: dividerLine.bottomAnchor, constant: 16),
+            instructionsLabel.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 16),
             instructionsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             instructionsLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
@@ -187,5 +200,14 @@ extension ClothingSelectionViewController: ViewCodeProtocol {
             clothingSelector5.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             clothingSelector5.topAnchor.constraint(equalTo: clothingSelector4.bottomAnchor, constant: 16),
         ])
+        progress.numberOfSteps = 4
+        progress.setStep(1, animated: false)
+      
+       
+    }
+    func avançouParaPasso(_ passo: Int) {
+        progress.setStep(passo, animated: true)
+      
+    
     }
 }

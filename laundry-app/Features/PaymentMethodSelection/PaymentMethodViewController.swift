@@ -10,6 +10,8 @@ import UIKit
 
 class PaymentMethodViewController: UIViewController {
     
+    private let progress = StepProgressView()
+    
     private var paymentOptions: [PaymentOptionView] = []
     private var selectedPaymentMethod: String = "Pix"
     
@@ -47,6 +49,7 @@ class PaymentMethodViewController: UIViewController {
         title = "Método de pagamento"
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = false
+        progress.translatesAutoresizingMaskIntoConstraints = false
         
         setupStackView()
         setupPaymentOptions()
@@ -103,19 +106,26 @@ extension PaymentMethodViewController: ViewCodeProtocol {
         view.addSubview(instructionsLabel)
         view.addSubview(nextButton)
         view.addSubview(stackView)
+        view.addSubview(progress)
         
-
-
+        
+        
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
+            
+            
+            progress.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            progress.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            progress.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            progress.heightAnchor.constraint(equalToConstant: 4),
             dividerLine.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             dividerLine.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             dividerLine.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             dividerLine.heightAnchor.constraint(equalToConstant: 0.5),
             
-            instructionsLabel.topAnchor.constraint(equalTo: dividerLine.bottomAnchor, constant: 16),
+            instructionsLabel.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 16),
             instructionsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             instructionsLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
@@ -126,9 +136,14 @@ extension PaymentMethodViewController: ViewCodeProtocol {
             stackView.topAnchor.constraint(equalTo: instructionsLabel.bottomAnchor, constant: 16),
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
-
+            
         ])
+        progress.numberOfSteps = 4
+        progress.setStep(3, animated: false)
     }
-    
-    
+    func avançouParaPasso(_ passo: Int) {
+        progress.setStep(passo, animated: true)
+        
+        
+    }
 }
