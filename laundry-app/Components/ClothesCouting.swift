@@ -10,7 +10,7 @@ import UIKit
 
 
 
-class ClothesCouting: UIView {
+class ClothesCouting: UIView, UITextFieldDelegate {
     
     lazy var iconImage: UIImageView = {
         var icon = UIImageView()
@@ -38,16 +38,19 @@ class ClothesCouting: UIView {
         return label
     }()
     
-    lazy var countLabel: UILabel = {
-        var label = UILabel()
-        label.text = "0"
-        label.textColor = .label
-        label.backgroundColor = .tertiarySystemFill
-        label.layer.cornerRadius = 16
-        label.clipsToBounds = true
-        label.textAlignment = .center
-        return label
-    }()
+    lazy var countTF: UITextField = {
+             let tf = UITextField()
+             tf.text = "\(count)"
+             tf.textColor = .label
+             tf.backgroundColor = .tertiarySystemFill
+             tf.layer.cornerRadius = 16
+             tf.clipsToBounds = true
+             tf.delegate = self
+             tf.textAlignment = .center
+             tf.keyboardType = .numberPad
+             tf.addTarget(self, action: #selector(editingDidEnd(_ :)), for: .editingDidEnd)
+             return tf
+         }()
     
     lazy var decrementButton: UIButton = {
         let button = UIButton()
@@ -89,7 +92,7 @@ class ClothesCouting: UIView {
     }()
     
     lazy var mainStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [iconImage, clothesName, countLabel, constrolsStack])
+        let stack = UIStackView(arrangedSubviews: [iconImage, clothesName, countTF, constrolsStack])
         stack.axis = .horizontal
         stack.spacing = 4
         stack.alignment = .center
@@ -99,7 +102,7 @@ class ClothesCouting: UIView {
     
     var count: Int = 0 {
         didSet {
-            countLabel.text = "\(count)"
+            countTF.text = "\(count)"
             decrementButton.isEnabled = count > 0
         }
     }
@@ -131,7 +134,27 @@ class ClothesCouting: UIView {
         count = value
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+             let invalid = CharacterSet.decimalDigits.inverted
+             if string.rangeOfCharacter(from: invalid) != nil {
 
+
+                 return false
+             }
+             let current = textField.text ?? ""
+             guard let r = Range(range, in: current) else { return false }
+             let updated = current.replacingCharacters(in: r, with: string)
+             if updated.isEmpty {
+                 return true
+             }
+             if updated.count > 2 {
+                 return false
+             }
+             if let v = Int(updated), v >= 0 && v <= 99 {
+                 return true
+             }
+             return false
+         }
     
     override init (frame: CGRect) {
         super.init(frame: frame)
@@ -160,6 +183,13 @@ class ClothesCouting: UIView {
             count += 1
         }
     }
+    
+    @objc private func editingDidEnd(_ tf: UITextField) {
+             let v = Int(tf.text ?? "") ?? 0
+
+
+             count = min(max(v,0), 99)
+         }
     
     
     
@@ -200,8 +230,8 @@ extension ClothesCouting: ViewCodeProtocol{
             separator.heightAnchor.constraint(equalToConstant: 18),
             
             
-            countLabel.heightAnchor.constraint(equalToConstant: 32),
-            countLabel.widthAnchor.constraint(equalToConstant: 47),
+            countTF.heightAnchor.constraint(equalToConstant: 32),
+            countTF.widthAnchor.constraint(equalToConstant: 47),
             
             iconImage.heightAnchor.constraint(equalToConstant: 33),
             iconImage.widthAnchor.constraint(equalToConstant: 44)
