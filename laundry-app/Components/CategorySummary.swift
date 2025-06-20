@@ -10,6 +10,9 @@ import UIKit
 
 class CategorySummary: UIView {
     
+    weak var delegate: CategorySummaryDelegate?
+    var section: OrderSummarySection!
+    
     lazy var label: UILabel = {
         let title = UILabel()
         title.text = ""
@@ -54,10 +57,6 @@ class CategorySummary: UIView {
             detailLabel.text = details
         }
     }
-    
-    @objc func editSession() {
-    
-    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -66,6 +65,10 @@ class CategorySummary: UIView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    @objc func editSession() {
+        delegate?.categorySummaryDidTapEdit(section)
     }
 }
 

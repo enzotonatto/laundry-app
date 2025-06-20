@@ -1,10 +1,3 @@
-//
-//  ClothingSelectionViewController.swift
-//  laundry-app
-//
-//  Created by Gabriel Barbosa on 17/06/25.
-//
-
 import UIKit
 
 class ClothingSelectionViewController: UIViewController {
@@ -59,7 +52,7 @@ class ClothingSelectionViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.title = "Próximo"
         button.isShowingIcon = true
-        button.addTarget(self, action: #selector(goToOrderSummaryVC), for: .touchUpInside)
+        button.addTarget(self, action: #selector(goToOrderAdressVC), for: .touchUpInside)
         return button
     }()
     
@@ -81,7 +74,6 @@ class ClothingSelectionViewController: UIViewController {
         return label
     }()
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Peças"
@@ -89,25 +81,62 @@ class ClothingSelectionViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
         
         setup()
-    
+        hideKeyboardWhenTappedAround()  
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        // Re-esconde a navigation bar quando voltar para LaundryDetail
         if isMovingFromParent {
             navigationController?.setNavigationBarHidden(true, animated: animated)
         }
     }
     
-    
-    @objc func goToOrderSummaryVC() {
-    
+    @objc func goToOrderAdressVC() {
+        var lines: [String] = []
+        
+        let camisetaCount = clothingSelector.getCount()
+        if camisetaCount > 0 {
+            lines.append("Camiseta: \(camisetaCount)")
+        }
+        let casacoCount = clothingSelector2.getCount()
+        if casacoCount > 0 {
+            lines.append("Casaco: \(casacoCount)")
+        }
+        let ternoCount = clothingSelector3.getCount()
+        if ternoCount > 0 {
+            lines.append("Terno: \(ternoCount)")
+        }
+        let lencolCount = clothingSelector4.getCount()
+        if lencolCount > 0 {
+            lines.append("Lençol: \(lencolCount)")
+        }
+        let calcaCount = clothingSelector5.getCount()
+        if calcaCount > 0 {
+            lines.append("Calça: \(calcaCount)")
+        }
+        
+        if lines.isEmpty {
+            lines.append("Nenhuma peça selecionada")
+        }
+        
+        OrderFlowViewModel.shared.selectedClothes = lines.joined(separator: "\n")
+        
         navigationController?.setNavigationBarHidden(false, animated: false)
-        let orderSummaryVC = OrderSummaryViewController()
-        navigationController?.pushViewController(orderSummaryVC, animated: true)
+        let addressVC = AddressViewController()
+        navigationController?.pushViewController(addressVC, animated: true)
     }
-    
+}
+
+extension UIViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc private func hideKeyboard() {
+        view.endEditing(true)
+    }
 }
 
 extension ClothingSelectionViewController: ViewCodeProtocol {
@@ -157,9 +186,6 @@ extension ClothingSelectionViewController: ViewCodeProtocol {
             clothingSelector5.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             clothingSelector5.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             clothingSelector5.topAnchor.constraint(equalTo: clothingSelector4.bottomAnchor, constant: 16),
-        
         ])
     }
-    
-    
 }

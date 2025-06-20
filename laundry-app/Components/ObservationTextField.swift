@@ -23,6 +23,8 @@ class ObservationTextField: UIView {
         tf.placeholder = "Observação"
         tf.layer.cornerRadius = 32
         tf.translatesAutoresizingMaskIntoConstraints = false
+        tf.setLeftPaddingPoints(16)
+
         return tf
     }()
     

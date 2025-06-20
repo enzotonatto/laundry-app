@@ -153,7 +153,8 @@ class LaundryDetailViewController: UIViewController {
     }
     
     @objc func goToClothingSelectionVC() {
-    
+        OrderFlowViewModel.shared.selectedLaundry = laundry
+
         navigationController?.setNavigationBarHidden(false, animated: false)
         let clothingSelectionVC = ClothingSelectionViewController()
         navigationController?.pushViewController(clothingSelectionVC, animated: true)
