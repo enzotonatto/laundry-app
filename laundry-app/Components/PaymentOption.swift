@@ -11,7 +11,7 @@ protocol PaymentOptionViewDelegate: AnyObject {
     func didSelect(option: PaymentOptionView)
 }
 
-class PaymentOptionView: UIView, ViewCodeProtocol {
+final class PaymentOptionView: UIView, ViewCodeProtocol {
     
     private let iconImageView = UIImageView()
     private let titleLabel = UILabel()
@@ -23,10 +23,18 @@ class PaymentOptionView: UIView, ViewCodeProtocol {
     init(icon: UIImage?, title: String, isSelected: Bool) {
         super.init(frame: .zero)
         self.title = title
+        
         configure(icon: icon, title: title, isSelected: isSelected)
         setup()
+        
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         addGestureRecognizer(tap)
+        
+        radioButton.addTarget(self, action: #selector(handleTap), for: .touchUpInside)
+        
+        iconImageView.isUserInteractionEnabled = true
+        let iconTap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        iconImageView.addGestureRecognizer(iconTap)
     }
     
     required init?(coder: NSCoder) {
@@ -38,7 +46,7 @@ class PaymentOptionView: UIView, ViewCodeProtocol {
         layer.cornerRadius = 32
         
         iconImageView.image = icon?.withRenderingMode(.alwaysTemplate)
-        iconImageView.tintColor = UIColor.systemIndigo
+        iconImageView.tintColor = .accent
         iconImageView.contentMode = .scaleAspectFit
         
         titleLabel.text = title
@@ -49,11 +57,12 @@ class PaymentOptionView: UIView, ViewCodeProtocol {
     }
     
     private func configureRadioButton(selected: Bool) {
-        radioButton.subviews.forEach { $0.removeFromSuperview() } 
+        radioButton.subviews.forEach { $0.removeFromSuperview() }
+        
         radioButton.layer.cornerRadius = 12
         radioButton.layer.borderWidth = 2
         radioButton.layer.borderColor = UIColor.systemIndigo.cgColor
-        radioButton.backgroundColor = selected ? UIColor.systemIndigo : .clear
+        radioButton.backgroundColor = selected ? .systemIndigo : .clear
         
         if selected {
             let innerCircle = UIView()
@@ -77,7 +86,7 @@ class PaymentOptionView: UIView, ViewCodeProtocol {
     func setSelected(_ selected: Bool) {
         configureRadioButton(selected: selected)
     }
-    
+        
     func addSubViews() {
         addSubview(iconImageView)
         addSubview(titleLabel)
@@ -107,4 +116,3 @@ class PaymentOptionView: UIView, ViewCodeProtocol {
         ])
     }
 }
-

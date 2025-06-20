@@ -60,6 +60,7 @@ extension ObservationTextField: ViewCodeProtocol{
             
             textField.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             textField.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            textField.bottomAnchor.constraint(equalTo: self.bottomAnchor),
             textField.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 8),
             textField.heightAnchor.constraint(equalToConstant: 54)
         ])

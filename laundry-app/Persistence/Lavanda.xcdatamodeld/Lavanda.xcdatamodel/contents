@@ -18,6 +18,7 @@
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="itemList" optional="YES" attributeType="String"/>
         <attribute name="laundry" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="observation" optional="YES" attributeType="String"/>
         <attribute name="paymentMethod" optional="YES" attributeType="String"/>
         <attribute name="pickupAddress" optional="YES" attributeType="String"/>
     </entity>
