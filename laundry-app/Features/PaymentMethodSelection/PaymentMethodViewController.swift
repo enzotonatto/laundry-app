@@ -47,6 +47,7 @@ class PaymentMethodViewController: UIViewController {
         title = "Método de pagamento"
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = false
+        navigationItem.backButtonTitle = "Voltar"
         
         setupStackView()
         setupPaymentOptions()
@@ -72,7 +73,7 @@ class PaymentMethodViewController: UIViewController {
     private func setupPaymentOptions() {
         let moneyOption = PaymentOptionView(icon: UIImage(named: "moneyLarge"), title: "Dinheiro", isSelected: false)
         let cardOption = PaymentOptionView(icon: UIImage(named: "cardLarge"), title: "Cartão", isSelected: false)
-        let pixOption = PaymentOptionView(icon: UIImage(named: "pixLarge"), title: "Pix", isSelected: true)
+        let pixOption = PaymentOptionView(icon: UIImage(named: "pixLarge"), title: "Pix", isSelected: false)
         
         [moneyOption, cardOption, pixOption].forEach {
             $0.delegate = self

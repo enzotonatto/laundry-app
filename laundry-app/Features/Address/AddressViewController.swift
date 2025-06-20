@@ -8,9 +8,7 @@
 import UIKit
 
 final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFieldDelegate {
-    
-    // MARK: - UI Components
-    
+        
     private lazy var labelAddress: UILabel = {
         let label = UILabel()
         label.text = "Preencha o endereço onde deseja que a coleta seja realizada"
@@ -33,26 +31,25 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
         c.translatesAutoresizingMaskIntoConstraints = false
         return c
     }()
+    
     private let logradouroComponent: AddressComponent = {
         let c = AddressComponent()
         c.translatesAutoresizingMaskIntoConstraints = false
         return c
     }()
-    private let bairroComponent: AddressComponent = {
-        let c = AddressComponent()
-        c.translatesAutoresizingMaskIntoConstraints = false
-        return c
-    }()
+
     private let cidadeComponent: AddressComponent = {
         let c = AddressComponent()
         c.translatesAutoresizingMaskIntoConstraints = false
         return c
     }()
+    
     private let numberComponent: AddressComponent = {
         let c = AddressComponent()
         c.translatesAutoresizingMaskIntoConstraints = false
         return c
     }()
+    
     private let complementComponent: AddressComponent = {
         let c = AddressComponent()
         c.translatesAutoresizingMaskIntoConstraints = false
@@ -67,9 +64,7 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
         btn.addTarget(self, action: #selector(goToPaymentVC), for: .touchUpInside)
         return btn
     }()
-    
-    // MARK: - Lifecycle
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Endereço"
@@ -90,7 +85,6 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
         
         [cepComponent,
          logradouroComponent,
-         bairroComponent,
          cidadeComponent,
          numberComponent,
          complementComponent].forEach {
@@ -108,24 +102,19 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
         textField.resignFirstResponder()
         return true
     }
-    
-    // MARK: - Configuration
-    
-    private func configureFields() {
-        cepComponent.configure(label: "CEP*",         placeholder: "00000-000")
-        logradouroComponent.configure(label: "Logradouro", placeholder: "Rua, Av…")
-        bairroComponent.configure(label: "Bairro",      placeholder: "Bairro")
-        cidadeComponent.configure(label: "Cidade",      placeholder: "Cidade")
-        numberComponent.configure(label: "Número*",     placeholder: "000")
-        complementComponent.configure(label: "Complemento", placeholder: "Apto, Bloco…")
         
-        [logradouroComponent, bairroComponent, cidadeComponent].forEach {
+    private func configureFields() {
+        cepComponent.configure(label: "CEP",         placeholder: "00000-000")
+        logradouroComponent.configure(label: "Logradouro", placeholder: "Rua, Av…")
+        cidadeComponent.configure(label: "Cidade",      placeholder: "Cidade")
+        numberComponent.configure(label: "Número",     placeholder: "000")
+        complementComponent.configure(label: "Complemento (opcional)", placeholder: "Apto, Bloco…")
+        
+        [logradouroComponent, cidadeComponent].forEach {
             $0.textField.isEnabled = false
         }
     }
-    
-    // MARK: - UITextFieldDelegate
-    
+        
     func textFieldDidEndEditing(_ textField: UITextField) {
         guard textField == cepComponent.textField,
               let cepText = cepComponent.text, !cepText.isEmpty else { return }
@@ -134,9 +123,6 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
             guard let self = self, let data = json else { return }
             if let log = data["logradouro"] as? String {
                 self.logradouroComponent.textField.text = log
-            }
-            if let bairro = data["bairro"] as? String {
-                self.bairroComponent.textField.text = bairro
             }
             if let city = data["localidade"] as? String {
                 self.cidadeComponent.textField.text = city
@@ -149,7 +135,6 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
     @objc private func goToPaymentVC() {
         let cep        = cepComponent.text ?? ""
         let logradouro = logradouroComponent.textField.text ?? ""
-        let bairro     = bairroComponent.textField.text ?? ""
         let cidade     = cidadeComponent.textField.text ?? ""
         let numero     = numberComponent.text ?? ""
         let compl      = complementComponent.text ?? ""
@@ -157,7 +142,6 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
         let fullAddress = """
         CEP: \(cep)
         \(logradouro), Nº \(numero)
-        Bairro: \(bairro)
         Cidade: \(cidade)
         \(compl.isEmpty ? "" : "Compl.: \(compl)")
         """
@@ -174,7 +158,6 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
             dividerLine, labelAddress,
             cepComponent,
             logradouroComponent,
-            bairroComponent,
             cidadeComponent,
             numberComponent,
             complementComponent,
@@ -204,14 +187,9 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
             logradouroComponent.topAnchor.constraint(equalTo: cepComponent.bottomAnchor, constant: 16),
             logradouroComponent.leadingAnchor.constraint(equalTo: cepComponent.leadingAnchor),
             logradouroComponent.trailingAnchor.constraint(equalTo: cepComponent.trailingAnchor),
-            
-            // Bairro
-            bairroComponent.topAnchor.constraint(equalTo: logradouroComponent.bottomAnchor, constant: 16),
-            bairroComponent.leadingAnchor.constraint(equalTo: cepComponent.leadingAnchor),
-            bairroComponent.trailingAnchor.constraint(equalTo: cepComponent.trailingAnchor),
-            
+                        
             // Cidade
-            cidadeComponent.topAnchor.constraint(equalTo: bairroComponent.bottomAnchor, constant: 16),
+            cidadeComponent.topAnchor.constraint(equalTo: logradouroComponent.bottomAnchor, constant: 16),
             cidadeComponent.leadingAnchor.constraint(equalTo: cepComponent.leadingAnchor),
             cidadeComponent.trailingAnchor.constraint(equalTo: cepComponent.trailingAnchor),
             
