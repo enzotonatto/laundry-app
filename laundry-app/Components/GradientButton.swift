@@ -4,6 +4,7 @@ class GradientButton: UIButton {
     
     private let gradientLayer = CAGradientLayer()
     private let tapAreaPadding: CGFloat = 10
+    private var gradientColors: [UIColor] = [.inactiveStartGradient, .inactiveEndGradient]
     
     lazy var label: UILabel = {
         let label = UILabel()
@@ -49,20 +50,28 @@ class GradientButton: UIButton {
         }
     }
     
+    var isActive: Bool = true {
+            didSet {
+                if isActive {
+                    gradientColors = [.startGradient, .endGradient]
+                    isUserInteractionEnabled = true
+                } else {
+                    gradientColors = [.inactiveStartGradient, .inactiveEndGradient]
+                    isUserInteractionEnabled = false
+                }
+                setGradientColors(gradientColors)
+            }
+        }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         layer.insertSublayer(gradientLayer, at: 0)
-        setGradientColors([.startGradient, .endGradient])
+        setGradientColors(gradientColors)
         setup()
-        configureTouchHandling()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func configureTouchHandling() {
-        isUserInteractionEnabled = true
     }
     
     override func layoutSubviews() {
