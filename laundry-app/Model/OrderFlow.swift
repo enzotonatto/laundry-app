@@ -14,11 +14,13 @@ class OrderFlowViewModel {
     var selectedClothes: String = ""
     var pickupAddress: String = ""
     var paymentMethod: String = ""
+    var observation: String? = ""
     
     func clear() {
         selectedLaundry = nil
         selectedClothes = ""
         pickupAddress = ""
         paymentMethod = ""
+        observation = ""
     }
 }
