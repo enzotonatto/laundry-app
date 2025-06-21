@@ -146,6 +146,12 @@ class LaundryDetailViewController: UIViewController {
         setup()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        returnButton.isHidden = false
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
     @objc func returnToLaundryVC() {
         navigationController?.setNavigationBarHidden(false, animated: false)
         navigationController?.popViewController(animated: true)
@@ -153,8 +159,8 @@ class LaundryDetailViewController: UIViewController {
     }
     
     @objc func goToClothingSelectionVC() {
+        returnButton.isHidden = true
         OrderFlowViewModel.shared.selectedLaundry = laundry
-
         navigationController?.setNavigationBarHidden(false, animated: false)
         let clothingSelectionVC = ClothingSelectionViewController()
         navigationController?.pushViewController(clothingSelectionVC, animated: true)
@@ -175,13 +181,15 @@ extension LaundryDetailViewController: ViewCodeProtocol {
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            returnButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            returnButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             returnButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            returnButton.widthAnchor.constraint(equalToConstant: 78),
+            returnButton.heightAnchor.constraint(equalToConstant: 30),
             
             laundryImage.topAnchor.constraint(equalTo: view.topAnchor),
             laundryImage.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             laundryImage.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            laundryImage.heightAnchor.constraint(equalToConstant: 328),
+            laundryImage.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4),
             
             availabilityCard.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             availabilityCard.bottomAnchor.constraint(equalTo: detailsContainer.topAnchor, constant: -16),
@@ -199,14 +207,11 @@ extension LaundryDetailViewController: ViewCodeProtocol {
             infoStack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             infoStack.topAnchor.constraint(equalTo: laundryStack.bottomAnchor, constant: 16),
             
-            
-            
             startOrderButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             startOrderButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             startOrderButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
         ])
     }
-    
 }
 extension LaundryDetailViewController: AvalibilityCardDelegate {
     func isLaundryOpen(for laundry: Laundry) -> Bool {
