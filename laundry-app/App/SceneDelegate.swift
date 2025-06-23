@@ -26,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         LaundryPersistence.shared.context = context
         
         // 3) Cria sua UI normalmente
-        let laundryVC = LaundryViewController()
+        let laundryVC = CollectionSchedullingViewController()
         let nav = UINavigationController(rootViewController: laundryVC)
         
         let window = UIWindow(windowScene: windowScene)

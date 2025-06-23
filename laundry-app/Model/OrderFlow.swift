@@ -15,6 +15,7 @@ class OrderFlowViewModel {
     var pickupAddress: String = ""
     var paymentMethod: String = ""
     
+    
     func clear() {
         selectedLaundry = nil
         selectedClothes = ""
