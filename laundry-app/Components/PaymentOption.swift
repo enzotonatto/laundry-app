@@ -50,7 +50,7 @@ final class PaymentOptionView: UIView, ViewCodeProtocol {
         iconImageView.contentMode = .scaleAspectFit
         
         titleLabel.text = title
-        titleLabel.textColor = .black
+        titleLabel.textColor = .label
         titleLabel.font = Fonts.body
         
         configureRadioButton(selected: isSelected)

@@ -14,7 +14,7 @@ class InfoRow: UIView {
     iv.contentMode = .scaleAspectFit
     iv.translatesAutoresizingMaskIntoConstraints = false
     iv.tintColor = .accent
-    iv.backgroundColor = .white
+    iv.backgroundColor = .secondarySystemBackground
     iv.layer.cornerRadius = 32
     iv.clipsToBounds = true
     return iv
@@ -50,7 +50,6 @@ class InfoRow: UIView {
   convenience init(icon: UIImage, title: String, text: String) {
     let lbl = UILabel()
     lbl.font = .systemFont(ofSize: 16)
-    lbl.textColor = .darkText
     lbl.numberOfLines = 0
     lbl.translatesAutoresizingMaskIntoConstraints = false
     lbl.text = text
@@ -82,7 +81,7 @@ class InfoRow: UIView {
   required init?(coder: NSCoder) { fatalError() }
 
   private func setupView() {
-    backgroundColor = .white
+    backgroundColor = .secondarySystemBackground
     layer.cornerRadius = 32
     translatesAutoresizingMaskIntoConstraints = false
   }
