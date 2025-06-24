@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class OrderSummaryViewController: UIViewController, UITextFieldDelegate, CategorySummaryDelegate {
+class OrderSummaryViewController: UIViewController, UITextFieldDelegate, CategorySummaryDelegate, UIGestureRecognizerDelegate {
     
     lazy var dividerLine: UIView = {
         let view = UIView()
@@ -46,6 +46,17 @@ class OrderSummaryViewController: UIViewController, UITextFieldDelegate, Categor
         view.delegate = self
         return view
     }()
+    
+    lazy var schedulingSummary: CategorySummary = {
+        let view = CategorySummary()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.title = "Agendamento da coleta"
+        view.details = OrderFlowViewModel.shared.fullScheduling
+        view.delegate = self
+        return view
+    }()
+    
+    
 
     lazy var observation: ObservationTextField = {
         let obs = ObservationTextField()
@@ -57,6 +68,7 @@ class OrderSummaryViewController: UIViewController, UITextFieldDelegate, Categor
         let button = GradientButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.title = "Finalizar Pedido"
+        button.isActive = true
         button.isShowingIcon = false
         button.addTarget(self, action: #selector(goToConfirmationVC), for: .touchUpInside)
         return button
@@ -74,6 +86,8 @@ class OrderSummaryViewController: UIViewController, UITextFieldDelegate, Categor
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
+        tap.delaysTouchesBegan   = false
+        tap.delegate = self
         view.addGestureRecognizer(tap)
         
         setup()
@@ -84,6 +98,8 @@ class OrderSummaryViewController: UIViewController, UITextFieldDelegate, Categor
         clothesSummary.details       = OrderFlowViewModel.shared.selectedClothes
         addressSummary.details       = OrderFlowViewModel.shared.pickupAddress
         paymentMethodSumary.details  = OrderFlowViewModel.shared.paymentMethod
+        schedulingSummary.details   = OrderFlowViewModel.shared.fullScheduling
+
     }
     
     @objc private func dismissKeyboard() {
@@ -102,42 +118,49 @@ class OrderSummaryViewController: UIViewController, UITextFieldDelegate, Categor
             return
         }
 
-        // Valores vindos do fluxo
         let pickupAddress = OrderFlowViewModel.shared.pickupAddress
         let itemList      = OrderFlowViewModel.shared.selectedClothes
         let paymentMethod = OrderFlowViewModel.shared.paymentMethod
         let createAt      = Date()
+        let obsText = observation.textField.text?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let obsNil  = (obsText?.isEmpty ?? true) ? nil : obsText
 
-        // 1️⃣ Salva no Core Data
+        OrderFlowViewModel.shared.observation = obsNil
+
         OrdersPersistence.shared.addNewOrder(
             pickupAddress: pickupAddress,
             createAt: createAt,
             itemList: itemList,
             laundryId: laundryId,
-            paymentMethod: paymentMethod
+            paymentMethod: paymentMethod,
+            observation: obsText
         )
         
-        // 2️⃣ Navega para a tela de confirmação
         navigationController?.setNavigationBarHidden(false, animated: false)
         let confirmationVC = OrderConfirmationViewController()
         navigationController?.pushViewController(confirmationVC, animated: true)
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if touch.view is UITextField {
+            return false
+        }
+        return true
     }
 
     
     func categorySummaryDidTapEdit(_ section: OrderSummarySection) {
         switch section {
         case .clothes:
-            // volta para ClothingSelectionViewController
             if let vc = navigationController?.viewControllers.first(where: { $0 is ClothingSelectionViewController }) {
                 navigationController?.popToViewController(vc, animated: true)
             }
         case .address:
-            // volta para AddressViewController
             if let vc = navigationController?.viewControllers.first(where: { $0 is AddressViewController }) {
                 navigationController?.popToViewController(vc, animated: true)
             }
         case .payment:
-            // volta para PaymentMethodViewController
             if let vc = navigationController?.viewControllers.first(where: { $0 is PaymentMethodViewController }) {
                 navigationController?.popToViewController(vc, animated: true)
             }
@@ -151,7 +174,7 @@ extension OrderSummaryViewController: ViewCodeProtocol {
         view.addSubview(clothesSummary)
         view.addSubview(addressSummary)
         view.addSubview(paymentMethodSumary)
-        //view.addSubview(schedulingSummary)
+        view.addSubview(schedulingSummary)
         view.addSubview(observation)
         view.addSubview(finishOrderButton)
         view.addSubview(dividerLine)
@@ -178,11 +201,11 @@ extension OrderSummaryViewController: ViewCodeProtocol {
             paymentMethodSumary.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             paymentMethodSumary.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             
-//            schedulingSummary.topAnchor.constraint(equalTo: paymentMethodSumary.bottomAnchor, constant: 24),
-//            schedulingSummary.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-//            schedulingSummary.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            schedulingSummary.topAnchor.constraint(equalTo: paymentMethodSumary.bottomAnchor, constant: 24),
+            schedulingSummary.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            schedulingSummary.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             
-            observation.topAnchor.constraint(equalTo: paymentMethodSumary.bottomAnchor, constant: 24),
+            observation.topAnchor.constraint(equalTo: schedulingSummary.bottomAnchor, constant: 24),
             observation.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             observation.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             

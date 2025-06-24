@@ -11,6 +11,7 @@ import UIKit
 
 
 class ClothesCouting: UIView, UITextFieldDelegate {
+    weak var delegate: ClothesCoutingDelegate?
     
     lazy var iconImage: UIImageView = {
         var icon = UIImageView()
@@ -104,6 +105,7 @@ class ClothesCouting: UIView, UITextFieldDelegate {
         didSet {
             countTF.text = "\(count)"
             decrementButton.isEnabled = count > 0
+            delegate?.counterDidChange(count: count, for: self)
         }
     }
     
@@ -193,6 +195,10 @@ class ClothesCouting: UIView, UITextFieldDelegate {
     
     
     
+}
+
+protocol ClothesCoutingDelegate: AnyObject {
+    func counterDidChange(count: Int, for counter: ClothesCouting)
 }
 
 extension ClothesCouting: ViewCodeProtocol{

@@ -39,6 +39,7 @@ class OrderConfirmationViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.title = "Ir para o WhatsApp"
         button.isShowingIcon = true
+        button.isActive = true
         button.addTarget(self, action: #selector(openWhatsApp), for: .touchUpInside)
         return button
     }()
@@ -64,14 +65,13 @@ class OrderConfirmationViewController: UIViewController {
     
     @objc func doneButtonTapped() {
         OrdersPersistence.shared.printAllOrders()
-        self.dismiss(animated: true, completion: nil)
+        navigationController?.popToRootViewController(animated: true)
     }
 
-    
     @objc func openWhatsApp() {
         guard let laundry = OrderFlowViewModel.shared.selectedLaundry else { return }
 
-        let message = """
+        var message = """
         🧺 *Novo Pedido de Lavanderia*
 
         🏢 Lavanderia: \(laundry.name ?? "N/A")
@@ -81,21 +81,33 @@ class OrderConfirmationViewController: UIViewController {
 
         📍 Endereço de coleta:
         \(OrderFlowViewModel.shared.pickupAddress)
-
+        
+        ⏰ Agendamento de coleta:
+        \(OrderFlowViewModel.shared.selectedDayMonth)/\(OrderFlowViewModel.shared.selectedMonth) - \(OrderFlowViewModel.shared.selectedDayWeek)
+        \(OrderFlowViewModel.shared.selectedTimeStart) - \(OrderFlowViewModel.shared.selectedTimeEnd)
+        
         💳 Método de pagamento:
         \(OrderFlowViewModel.shared.paymentMethod)
 
         📅 Criado em:
-        \(DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short))
+        \(DateFormatter
+            .localizedString(from: Date(), dateStyle: .short, timeStyle: .short))
         """
 
-        let phone = laundry.phoneNumber ?? ""
-        let urlString = "https://wa.me/\(phone)?text=\(message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+        if let obs = OrderFlowViewModel.shared.observation {
+            message += "\n\n💬 Observação:\n\(obs)"
+        }
+
+        let phone     = laundry.phoneNumber ?? ""
+        let encoded   = message
+                          .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let urlString = "https://wa.me/\(phone)?text=\(encoded)"
 
         if let url = URL(string: urlString), UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url)
         }
     }
+
 
 
 }

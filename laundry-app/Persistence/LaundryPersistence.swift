@@ -17,7 +17,7 @@ final class LaundryPersistence {
 }
 
 extension LaundryPersistence: LaundryPersistenceProtocol {
-    func addNewLaundry(name: String, address: String, latitude: Double, longitude: Double, openHour: Date, closeHour: Date, details: String, image: String, phoneNumber: String, paymentMethod: String) {
+    func addNewLaundry(name: String, address: String, latitude: Double, longitude: Double, openHour: Date, closeHour: Date, details: String, image: String, phoneNumber: String, paymentMethod: String, imageBanner: String) {
         guard let context else { return }
         
         let newLaundry = Laundry(context: context)
@@ -32,6 +32,7 @@ extension LaundryPersistence: LaundryPersistenceProtocol {
         newLaundry.image = image
         newLaundry.phoneNumber = phoneNumber
         newLaundry.paymentMethod = paymentMethod
+        newLaundry.imageBanner = imageBanner
         
         save()
 
@@ -76,9 +77,10 @@ extension LaundryPersistence: LaundryPersistenceProtocol {
                 openHour: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: now)!,
                 closeHour: calendar.date(bySettingHour: 20, minute: 0, second: 0, of: now)!,
                 details: "Self-service 24h com máquina rápida",
-                image: "laundryImage",
+                image: "iWashImage",
                 phoneNumber: "5551984229066",
-                paymentMethod: "pix"
+                paymentMethod: "pix",
+                imageBanner: "iWashImage"
             )
 
             addNewLaundry(
@@ -91,7 +93,9 @@ extension LaundryPersistence: LaundryPersistenceProtocol {
                 details: "Lavagem premium e entrega express",
                 image: "laundryImage",
                 phoneNumber: "5551983385200",
-                paymentMethod: "pix, money"
+                paymentMethod: "pix, money",
+                imageBanner: "laundryImageBanner"
+
             )
 
             addNewLaundry(
@@ -102,9 +106,11 @@ extension LaundryPersistence: LaundryPersistenceProtocol {
                 openHour: calendar.date(bySettingHour: 9, minute: 0, second: 0, of: now)!,
                 closeHour: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: now)!,
                 details: "Atendimento expresso e eco-friendly",
-                image: "laundryImage",
+                image: "iLaunderyImage",
                 phoneNumber: "5551998292204",
-                paymentMethod: "pix, money, card"
+                paymentMethod: "pix, money, card",
+                imageBanner: "iLaunderyImage"
+
             )
 
             addNewLaundry(
@@ -115,9 +121,11 @@ extension LaundryPersistence: LaundryPersistenceProtocol {
                 openHour: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: now)!,
                 closeHour: calendar.date(bySettingHour: 19, minute: 0, second: 0, of: now)!,
                 details: "Entrega grátis em até 24h",
-                image: "laundryImage",
+                image: "GabsImage",
                 phoneNumber: "5551996644448",
-                paymentMethod: "pix"
+                paymentMethod: "pix",
+                imageBanner: "GabsImage"
+
             )
             
             save()

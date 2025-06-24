@@ -1,21 +1,12 @@
-//
-//  AddressViewController.swift
-//  laundry-app
-//
-//  Created by Gustavo Melleu on 18/06/25.
-//
-
 import UIKit
 
 final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFieldDelegate {
-    
-    // MARK: - UI Components
     
     private lazy var labelAddress: UILabel = {
         let label = UILabel()
         label.text = "Preencha o endereço onde deseja que a coleta seja realizada"
         label.font = Fonts.title3
-        label.textColor = .black
+        label.textColor = .label
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -34,11 +25,6 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
         return c
     }()
     private let logradouroComponent: AddressComponent = {
-        let c = AddressComponent()
-        c.translatesAutoresizingMaskIntoConstraints = false
-        return c
-    }()
-    private let bairroComponent: AddressComponent = {
         let c = AddressComponent()
         c.translatesAutoresizingMaskIntoConstraints = false
         return c
@@ -64,39 +50,23 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
         btn.title = "Próximo"
         btn.isShowingIcon = true
         btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.isActive = false
         btn.addTarget(self, action: #selector(goToPaymentVC), for: .touchUpInside)
         return btn
     }()
-    
-    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Endereço"
         view.backgroundColor = .systemBackground
         navigationItem.backButtonTitle = "Voltar"
-        
         setup()
         configureFields()
-        
-        cepComponent.textField.delegate = self
-        
-        let tap = UITapGestureRecognizer(
-            target: self,
-            action: #selector(dismissKeyboard)
-        )
+        setupFieldListeners()
+        updateButtonState()
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
-        
-        [cepComponent,
-         logradouroComponent,
-         bairroComponent,
-         cidadeComponent,
-         numberComponent,
-         complementComponent].forEach {
-            $0.textField.delegate = self
-        }
-
     }
     
     @objc private func dismissKeyboard() {
@@ -104,132 +74,131 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        // fecha o teclado ao apertar Return
         textField.resignFirstResponder()
         return true
     }
     
-    // MARK: - Configuration
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        guard textField == cepComponent.textField,
+              let cepText = cepComponent.text, !cepText.isEmpty else {
+            updateButtonState()
+            return
+        }
+        CEPService.fetchAddress(by: cepText) { [weak self] json in
+            guard let self = self, let data = json else { return }
+            DispatchQueue.main.async {
+                if let log = data["logradouro"] as? String {
+                    self.logradouroComponent.textField.text = log
+                }
+                if let city = data["localidade"] as? String {
+                    self.cidadeComponent.textField.text = city
+                }
+                self.updateButtonState()
+            }
+        }
+    }
+    
+    @objc private func textFieldDidChange(_ textField: UITextField) {
+        updateButtonState()
+    }
+    
+    private func updateButtonState() {
+        let cepFilled        = !(cepComponent.text?.trimmingCharacters(in: .whitespaces).isEmpty ?? true)
+        let logradouroFilled = !(logradouroComponent.textField.text?.trimmingCharacters(in: .whitespaces).isEmpty ?? true)
+        let cidadeFilled     = !(cidadeComponent.textField.text?.trimmingCharacters(in: .whitespaces).isEmpty ?? true)
+        let numberFilled     = !(numberComponent.text?.trimmingCharacters(in: .whitespaces).isEmpty ?? true)
+        button.isActive = cepFilled && logradouroFilled && cidadeFilled && numberFilled
+    }
+    
+    private func setupFieldListeners() {
+        [cepComponent,
+         logradouroComponent,
+         cidadeComponent,
+         numberComponent].forEach {
+            $0.textField.delegate = self
+            $0.textField.addTarget(self,
+                                   action: #selector(textFieldDidChange(_:)),
+                                   for: .editingChanged)
+        }
+    }
     
     private func configureFields() {
-        cepComponent.configure(label: "CEP*",         placeholder: "00000-000")
+        cepComponent.configure(label: "CEP", placeholder: "00000-000")
         logradouroComponent.configure(label: "Logradouro", placeholder: "Rua, Av…")
-        bairroComponent.configure(label: "Bairro",      placeholder: "Bairro")
-        cidadeComponent.configure(label: "Cidade",      placeholder: "Cidade")
-        numberComponent.configure(label: "Número*",     placeholder: "000")
-        complementComponent.configure(label: "Complemento", placeholder: "Apto, Bloco…")
+        cidadeComponent.configure(label: "Cidade", placeholder: "Cidade")
+        numberComponent.configure(label: "Número", placeholder: "000")
+        complementComponent.configure(label: "Complemento (opcional)", placeholder: "Apto, Bloco…")
         
-        [logradouroComponent, bairroComponent, cidadeComponent].forEach {
+        cepComponent.textField.keyboardType    = .numberPad
+        numberComponent.textField.keyboardType = .numberPad
+        
+        [logradouroComponent, cidadeComponent].forEach {
             $0.textField.isEnabled = false
         }
     }
     
-    // MARK: - UITextFieldDelegate
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        guard textField == cepComponent.textField,
-              let cepText = cepComponent.text, !cepText.isEmpty else { return }
-        
-        CEPService.fetchAddress(by: cepText) { [weak self] json in
-            guard let self = self, let data = json else { return }
-            if let log = data["logradouro"] as? String {
-                self.logradouroComponent.textField.text = log
-            }
-            if let bairro = data["bairro"] as? String {
-                self.bairroComponent.textField.text = bairro
-            }
-            if let city = data["localidade"] as? String {
-                self.cidadeComponent.textField.text = city
-            }
-        }
-    }
-    
-    // MARK: - Actions
-    
     @objc private func goToPaymentVC() {
         let cep        = cepComponent.text ?? ""
         let logradouro = logradouroComponent.textField.text ?? ""
-        let bairro     = bairroComponent.textField.text ?? ""
         let cidade     = cidadeComponent.textField.text ?? ""
         let numero     = numberComponent.text ?? ""
         let compl      = complementComponent.text ?? ""
-        
         let fullAddress = """
         CEP: \(cep)
-        \(logradouro), Nº \(numero)
-        Bairro: \(bairro)
-        Cidade: \(cidade)
-        \(compl.isEmpty ? "" : "Compl.: \(compl)")
+        \(cidade)
+        \(logradouro), \(numero)
+        \(compl.isEmpty ? "" : "\(compl)")
         """
         OrderFlowViewModel.shared.pickupAddress = fullAddress
-        
         let paymentVC = PaymentMethodViewController()
         navigationController?.pushViewController(paymentVC, animated: true)
     }
     
-    // MARK: - ViewCodeProtocol
-    
     func addSubViews() {
         [
             dividerLine, labelAddress,
-            cepComponent,
-            logradouroComponent,
-            bairroComponent,
-            cidadeComponent,
-            numberComponent,
-            complementComponent,
-            button
+            cepComponent, logradouroComponent,
+            cidadeComponent, numberComponent,
+            complementComponent, button
         ].forEach(view.addSubview)
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            // Divider
             dividerLine.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             dividerLine.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             dividerLine.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             dividerLine.heightAnchor.constraint(equalToConstant: 0.5),
             
-            // Label
             labelAddress.topAnchor.constraint(equalTo: dividerLine.bottomAnchor, constant: 16),
             labelAddress.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             labelAddress.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
-            // CEP
             cepComponent.topAnchor.constraint(equalTo: labelAddress.bottomAnchor, constant: 16),
             cepComponent.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             cepComponent.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
-            // Logradouro
             logradouroComponent.topAnchor.constraint(equalTo: cepComponent.bottomAnchor, constant: 16),
             logradouroComponent.leadingAnchor.constraint(equalTo: cepComponent.leadingAnchor),
             logradouroComponent.trailingAnchor.constraint(equalTo: cepComponent.trailingAnchor),
             
-            // Bairro
-            bairroComponent.topAnchor.constraint(equalTo: logradouroComponent.bottomAnchor, constant: 16),
-            bairroComponent.leadingAnchor.constraint(equalTo: cepComponent.leadingAnchor),
-            bairroComponent.trailingAnchor.constraint(equalTo: cepComponent.trailingAnchor),
-            
-            // Cidade
-            cidadeComponent.topAnchor.constraint(equalTo: bairroComponent.bottomAnchor, constant: 16),
+            cidadeComponent.topAnchor.constraint(equalTo: logradouroComponent.bottomAnchor, constant: 16),
             cidadeComponent.leadingAnchor.constraint(equalTo: cepComponent.leadingAnchor),
             cidadeComponent.trailingAnchor.constraint(equalTo: cepComponent.trailingAnchor),
             
-            // Número
             numberComponent.topAnchor.constraint(equalTo: cidadeComponent.bottomAnchor, constant: 16),
             numberComponent.leadingAnchor.constraint(equalTo: cepComponent.leadingAnchor),
             numberComponent.trailingAnchor.constraint(equalTo: cepComponent.trailingAnchor),
             
-            // Complemento
             complementComponent.topAnchor.constraint(equalTo: numberComponent.bottomAnchor, constant: 16),
             complementComponent.leadingAnchor.constraint(equalTo: cepComponent.leadingAnchor),
             complementComponent.trailingAnchor.constraint(equalTo: cepComponent.trailingAnchor),
             
-            // Botão
             button.leadingAnchor.constraint(equalTo: cepComponent.leadingAnchor),
             button.trailingAnchor.constraint(equalTo: cepComponent.trailingAnchor),
             button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
-            button.heightAnchor.constraint(equalToConstant: 56),
+            button.heightAnchor.constraint(equalToConstant: 56)
         ])
     }
 }
+

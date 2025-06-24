@@ -55,6 +55,8 @@ class CollectionSchedullingViewController: UIViewController {
     private lazy var nextButton: GradientButton = {
         let btn = GradientButton()
         btn.title = "Próxímo"
+        btn.isActive = false
+        btn.isEnabled = false
         btn.addTarget(self, action: #selector(goToOrderSummaryVC), for: .touchUpInside)
         btn.translatesAutoresizingMaskIntoConstraints = false
         return btn
@@ -154,7 +156,9 @@ class CollectionSchedullingViewController: UIViewController {
             daysStackView.addArrangedSubview(button)
 
             if offset == 0 {
-                selectedDate = date
+              selectedDate = date
+              dayTapped(button)
+                
             }
         }
     }
@@ -167,24 +171,32 @@ class CollectionSchedullingViewController: UIViewController {
         guard let data = sender.date else { return }
             selectedDate = data
             displayChunks(for: data)
+  
+            nextButton.isEnabled = false
+            nextButton.isActive  = false
 
-            let dayOfMonth = Calendar.current.component(.day, from: data)
-            OrderFlowViewModel.shared.selectedDayMonth = "\(dayOfMonth)"
+        let dayOfMonth = String(Calendar.current.component(.day, from: data))
+        OrderFlowViewModel.shared.selectedDayMonth = dayOfMonth
+        
+        let numberOfMonth = String(Calendar.current.component(.month, from: data))
+        OrderFlowViewModel.shared.selectedMonth = numberOfMonth
+        
+        
 
-            let weekdayFormatter = DateFormatter()
-            weekdayFormatter.locale = Locale(identifier: "pt_BR")
-            weekdayFormatter.dateFormat = "EEEE"
-            let weekdayName = weekdayFormatter.string(from: data)
-            OrderFlowViewModel.shared.selectedDayWeek = weekdayName
+        let weekdayFormatter = DateFormatter()
+        weekdayFormatter.locale = Locale(identifier: "pt_BR")
+        weekdayFormatter.dateFormat = "EEEE"
+        let weekdayName = weekdayFormatter.string(from: data)
+        OrderFlowViewModel.shared.selectedDayWeek = "\(weekdayName)"
 
-            let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "pt_BR")
-            formatter.timeZone = TimeZone(identifier: "America/Sao_Paulo")
-            formatter.dateFormat = "dd/MM/yyyy HH:mm"
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "pt_BR")
+        formatter.timeZone = TimeZone(identifier: "America/Sao_Paulo")
+        formatter.dateFormat = "dd/MM/yyyy HH:mm"
     }
     
     @objc func goToOrderSummaryVC() {
-        let vc = OrderSummaryViewController()  // nota os parênteses!
+        let vc = OrderSummaryViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -207,8 +219,16 @@ extension CollectionSchedullingViewController: TimeChunksViewDelegate {
 
         OrderFlowViewModel.shared.selectedTimeStart = startString
         OrderFlowViewModel.shared.selectedTimeEnd   = endString
-
+        
+        let full = """
+        \(OrderFlowViewModel.shared.selectedDayMonth)/\(OrderFlowViewModel.shared.selectedMonth) - \(OrderFlowViewModel.shared.selectedDayWeek.capitalized)  (\(OrderFlowViewModel.shared.selectedTimeStart) - \(OrderFlowViewModel.shared.selectedTimeEnd))
+        """
+        
+        OrderFlowViewModel.shared.fullScheduling = full
+        
         selectedChunk = "\(startString) – \(endString)"
+        nextButton.isEnabled = true
+        nextButton.isActive  = true
     }
 }
 
