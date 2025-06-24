@@ -13,7 +13,7 @@ class AddressComponent : UIView {
     lazy var labelText: UILabel = {
         let label = UILabel()
         label.font = Fonts.body
-        label.textColor = .black
+        label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()

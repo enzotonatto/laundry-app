@@ -65,7 +65,7 @@ class OrderConfirmationViewController: UIViewController {
     
     @objc func doneButtonTapped() {
         OrdersPersistence.shared.printAllOrders()
-        self.dismiss(animated: true, completion: nil)
+        navigationController?.popToRootViewController(animated: true)
     }
 
     

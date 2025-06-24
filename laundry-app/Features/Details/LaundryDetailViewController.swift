@@ -25,7 +25,7 @@ class LaundryDetailViewController: UIViewController {
     lazy var laundryImage: UIImageView = {
         var image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
-        image.image = UIImage(named: "laundryImageBanner")
+        image.image = UIImage(named: laundry.imageBanner ?? "")
         return image
     }()
     
@@ -40,7 +40,7 @@ class LaundryDetailViewController: UIViewController {
     lazy var detailsContainer: UIView = {
         var view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .secondarySystemBackground
+        view.backgroundColor = .systemBackground
         view.layer.cornerRadius = 32
         view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         view.clipsToBounds = true

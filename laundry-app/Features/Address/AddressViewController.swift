@@ -6,7 +6,7 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
         let label = UILabel()
         label.text = "Preencha o endereço onde deseja que a coleta seja realizada"
         label.font = Fonts.title3
-        label.textColor = .black
+        label.textColor = .label
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label

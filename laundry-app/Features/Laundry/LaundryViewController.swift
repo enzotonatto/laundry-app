@@ -25,6 +25,7 @@ class LaundryViewController: UIViewController {
         
         let cv = UICollectionView(frame: .zero, collectionViewLayout: flow)
         cv.backgroundColor = .systemBackground
+        cv.alwaysBounceVertical = true
         cv.dataSource = self
         cv.delegate = self
         cv.register(
@@ -83,6 +84,12 @@ class LaundryViewController: UIViewController {
         LaundryPersistence.shared.mockData()
         laundries = LaundryPersistence.shared.getAllLaundries()
         setup()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
     }
 
     override func viewDidLayoutSubviews() {
@@ -177,16 +184,11 @@ extension LaundryViewController: AvalibilityCardDelegate {
 
 extension LaundryViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // 1. Get the selected laundry
         let selectedLaundry = laundries[indexPath.item]
-
-        // 2. Create the detail view controller
         let detailVC = LaundryDetailViewController(laundry: selectedLaundry)
 
-        // 3. Navigate to it
         navigationController?.pushViewController(detailVC, animated: true)
 
-        // 4. Optional: deselect the cell
         collectionView.deselectItem(at: indexPath, animated: true)
     }
 }
