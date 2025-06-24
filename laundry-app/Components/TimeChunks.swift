@@ -8,10 +8,16 @@
 import Foundation
 import UIKit
 
+protocol TimeChunksViewDelegate: AnyObject {
+    func didSelect(option: TimeChunks)
+}
+
 class TimeChunks: UIButton{
     
-    private var chunkStart: Date = Date.now
-    private var chunkEnd: Date = Date.now
+    private(set) var chunkStart: Date
+    private(set) var chunkEnd:   Date
+
+    weak var delegate: TimeChunksViewDelegate?
     
     private lazy var background: UIView = {
         let view = UIView()
@@ -55,15 +61,58 @@ class TimeChunks: UIButton{
     }
     
     init(chunkStart: Date, chunkEnd: Date) {
-        self.chunkStart = chunkStart
-        self.chunkEnd = chunkEnd
-        super.init(frame: .zero)
-        setup()
+            self.chunkStart = chunkStart
+            self.chunkEnd   = chunkEnd
+            super.init(frame: .zero)
+            setup()  // seu ViewCodeProtocol
+            // 1) registra o tap
+            addTarget(self, action: #selector(handleTap), for: .touchUpInside)
+            // 2) configura o estado inicial
+            configureRadioButton(selected: isSelected)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    private func configureRadioButton(selected: Bool) {
+        selectIcon.subviews.forEach { $0.removeFromSuperview() }
+        selectIcon.layer.cornerRadius = 12
+        selectIcon.layer.borderWidth = 2
+        selectIcon.layer.borderColor = UIColor.systemIndigo.cgColor
+        selectIcon.backgroundColor = selected ? UIColor.systemIndigo : .clear
+        
+        if selected {
+            let innerCircle = UIView()
+            innerCircle.backgroundColor = .white
+            innerCircle.layer.cornerRadius = 6
+            innerCircle.translatesAutoresizingMaskIntoConstraints = false
+            selectIcon.addSubview(innerCircle)
+            NSLayoutConstraint.activate([
+                innerCircle.centerXAnchor.constraint(equalTo: selectIcon.centerXAnchor),
+                innerCircle.centerYAnchor.constraint(equalTo: selectIcon.centerYAnchor),
+                innerCircle.widthAnchor.constraint(equalToConstant: 12),
+                innerCircle.heightAnchor.constraint(equalToConstant: 12)
+            ])
+        }
+    }
+    
+    override var isSelected: Bool {
+            didSet { configureRadioButton(selected: isSelected) }
+    }
+        
+    @objc private func handleTap() {
+            // alterna o estado visual
+            isSelected.toggle()
+            // dispara o delegate
+            delegate?.didSelect(option: self)
+        }
+    
+    func setSelected(_ selected: Bool) {
+        configureRadioButton(selected: selected)
+    }
+    
+    
     
 }
 

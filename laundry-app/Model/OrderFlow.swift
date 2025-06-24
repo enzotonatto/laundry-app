@@ -14,6 +14,10 @@ class OrderFlowViewModel {
     var selectedClothes: String = ""
     var pickupAddress: String = ""
     var paymentMethod: String = ""
+    var selectedDayMonth: String = ""
+    var selectedDayWeek: String = ""
+    var selectedTimeStart: String = ""
+    var selectedTimeEnd: String = ""
     
     
     func clear() {
@@ -21,5 +25,9 @@ class OrderFlowViewModel {
         selectedClothes = ""
         pickupAddress = ""
         paymentMethod = ""
+        selectedDayMonth = ""
+        selectedDayWeek = ""
+        selectedTimeStart = ""
+        selectedTimeEnd = ""
     }
 }

@@ -66,6 +66,7 @@ class OrderSummaryViewController: UIViewController, UITextFieldDelegate, Categor
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Resumo do pedido"
+        navigationItem.backButtonTitle = "Voltar"
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = false
         

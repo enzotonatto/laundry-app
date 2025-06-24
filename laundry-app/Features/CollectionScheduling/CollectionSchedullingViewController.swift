@@ -5,9 +5,11 @@
 import UIKit
 
 class CollectionSchedullingViewController: UIViewController {
-    private let laundry = OrderFlowViewModel.shared.selectedLaundry
+    private var laundry = OrderFlowViewModel.shared.selectedLaundry
+    private var selectedChunk: String?
+
     
-    private let currentLaundry: Laundry! = {
+    private lazy var currentLaundry: Laundry! = {
         let laundries = LaundryPersistence.shared.getAllLaundries()
         guard let laundry = laundries.first(where: { $0.name == "Gumgum Lavanderias" }) else {
             fatalError("❌ Lavanderia iWash não encontrada no banco!")
@@ -15,7 +17,7 @@ class CollectionSchedullingViewController: UIViewController {
         return laundry
     }()
 
-    private let descriptionLabel: UILabel = {
+    private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Escolha o dia e horário da sua coleta"
@@ -23,7 +25,7 @@ class CollectionSchedullingViewController: UIViewController {
         return label
     }()
     
-    private let daysStackView: UIStackView = {
+    private lazy var daysStackView: UIStackView = {
         let sv = UIStackView()
         sv.axis = .horizontal
         sv.distribution = .equalSpacing
@@ -33,14 +35,14 @@ class CollectionSchedullingViewController: UIViewController {
     }()
     
     
-    private let timeChunksScrollView: UIScrollView = {
+    private lazy var timeChunksScrollView: UIScrollView = {
         let sv = UIScrollView()
         sv.showsHorizontalScrollIndicator = false
         sv.translatesAutoresizingMaskIntoConstraints = false
         return sv
     }()
 
-    private let timeChunksStackView: UIStackView = {
+    private lazy var timeChunksStackView: UIStackView = {
         let sv = UIStackView()
         sv.axis = .vertical
         sv.alignment = .fill
@@ -48,6 +50,14 @@ class CollectionSchedullingViewController: UIViewController {
         sv.spacing = 12
         sv.translatesAutoresizingMaskIntoConstraints = false
         return sv
+    }()
+    
+    private lazy var nextButton: GradientButton = {
+        let btn = GradientButton()
+        btn.title = "Próxímo"
+        btn.addTarget(self, action: #selector(goToOrderSummaryVC), for: .touchUpInside)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        return btn
     }()
 
 
@@ -57,6 +67,7 @@ class CollectionSchedullingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        navigationItem.backButtonTitle = "Voltar"
         title = "Agendamento da Coleta"
         setup()
         generateDayButtons()
@@ -67,7 +78,6 @@ class CollectionSchedullingViewController: UIViewController {
     private var selectedDate: Date?
     
     private func displayChunks(for date: Date) {
-        // limpa o stack
         timeChunksStackView.arrangedSubviews.forEach {
             timeChunksStackView.removeArrangedSubview($0)
             $0.removeFromSuperview()
@@ -79,20 +89,16 @@ class CollectionSchedullingViewController: UIViewController {
         let calendar = Calendar.current
         let targetDay = calendar.startOfDay(for: date)
 
-        // 1) Extrai só a hora e descarta minutos
         let openHour  = calendar.component(.hour, from: open)
         let closeHour = calendar.component(.hour, from: close)
 
-        // 2) Cria openDate em HH:00, mas se o open original tiver minutos > 0, pula pra próxima hora
         var openDate = calendar.date(bySettingHour: openHour, minute: 0, second: 0, of: targetDay)!
         if calendar.component(.minute, from: open) > 0 {
             openDate = calendar.date(byAdding: .hour, value: 1, to: openDate)!
         }
 
-        // 3) Cria closeDate em HH:00 (arredonda para baixo sempre)
         let closeDate = calendar.date(bySettingHour: closeHour, minute: 0, second: 0, of: targetDay)!
 
-        // 4) Se for hoje, começa na próxima hora cheia a partir de agora
         var currentStart = openDate
         if calendar.isDateInToday(targetDay) {
             let now = Date()
@@ -102,10 +108,10 @@ class CollectionSchedullingViewController: UIViewController {
             currentStart = max(openDate, nextHour)
         }
 
-        // 5) Gera blocos de 1h
         while currentStart < closeDate {
             let end = calendar.date(byAdding: .hour, value: 1, to: currentStart)!
             let chunk = TimeChunks(chunkStart: currentStart, chunkEnd: end)
+            chunk.delegate = self
             chunk.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
                 chunk.heightAnchor.constraint(equalToConstant: 54)
@@ -118,7 +124,6 @@ class CollectionSchedullingViewController: UIViewController {
     private func generateDayButtons() {
         let calendar = Calendar.current
         let localeBR = Locale(identifier: "pt_BR")
-        // normaliza hoje com hora zero
         let today = calendar.startOfDay(for: Date())
 
         for offset in 0..<5 {
@@ -160,29 +165,62 @@ class CollectionSchedullingViewController: UIViewController {
         sender.isSelected = true
 
         guard let data = sender.date else { return }
-        selectedDate = data
+            selectedDate = data
+            displayChunks(for: data)
 
-        // **Adicione esta linha para recarregar os horários**
-        displayChunks(for: data)
+            let dayOfMonth = Calendar.current.component(.day, from: data)
+            OrderFlowViewModel.shared.selectedDayMonth = "\(dayOfMonth)"
 
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "pt_BR")
-        formatter.timeZone = TimeZone(identifier: "America/Sao_Paulo")
-        formatter.dateFormat = "dd/MM/yyyy HH:mm"
+            let weekdayFormatter = DateFormatter()
+            weekdayFormatter.locale = Locale(identifier: "pt_BR")
+            weekdayFormatter.dateFormat = "EEEE"
+            let weekdayName = weekdayFormatter.string(from: data)
+            OrderFlowViewModel.shared.selectedDayWeek = weekdayName
 
-        let texto = formatter.string(from: data)
-        print("Usuário escolheu: \(texto)")
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "pt_BR")
+            formatter.timeZone = TimeZone(identifier: "America/Sao_Paulo")
+            formatter.dateFormat = "dd/MM/yyyy HH:mm"
+    }
+    
+    @objc func goToOrderSummaryVC() {
+        let vc = OrderSummaryViewController()  // nota os parênteses!
+        navigationController?.pushViewController(vc, animated: true)
     }
     
 
 }
 
+extension CollectionSchedullingViewController: TimeChunksViewDelegate {
+    func didSelect(option: TimeChunks) {
+        timeChunksStackView.arrangedSubviews
+            .compactMap { $0 as? TimeChunks }
+            .forEach { $0.setSelected($0 === option) }
+
+        let fmt = DateFormatter()
+        fmt.dateFormat = "HH:mm"
+        fmt.locale     = Locale(identifier: "pt_BR")
+        fmt.timeZone   = TimeZone(identifier: "America/Sao_Paulo")
+
+        let startString = fmt.string(from: option.chunkStart)
+        let endString   = fmt.string(from: option.chunkEnd)
+
+        OrderFlowViewModel.shared.selectedTimeStart = startString
+        OrderFlowViewModel.shared.selectedTimeEnd   = endString
+
+        selectedChunk = "\(startString) – \(endString)"
+    }
+}
+
+
 extension CollectionSchedullingViewController: ViewCodeProtocol {
     func addSubViews() {
         view.addSubview(descriptionLabel)
-            view.addSubview(daysStackView)
-            view.addSubview(timeChunksScrollView)
-            timeChunksScrollView.addSubview(timeChunksStackView)
+        view.addSubview(daysStackView)
+        view.addSubview(timeChunksScrollView)
+        timeChunksScrollView.addSubview(timeChunksStackView)
+        view.addSubview(nextButton)
+        
     }
     
     func setupConstraints() {
@@ -201,7 +239,7 @@ extension CollectionSchedullingViewController: ViewCodeProtocol {
             timeChunksScrollView.topAnchor.constraint(equalTo: daysStackView.bottomAnchor, constant: 24),
             timeChunksScrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             timeChunksScrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            timeChunksScrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            timeChunksScrollView.bottomAnchor.constraint(equalTo: nextButton.topAnchor, constant: -11),
 
             // StackView dentro do scroll
             timeChunksStackView.topAnchor.constraint(equalTo: timeChunksScrollView.topAnchor),
@@ -209,7 +247,11 @@ extension CollectionSchedullingViewController: ViewCodeProtocol {
             timeChunksStackView.leadingAnchor.constraint(equalTo: timeChunksScrollView.leadingAnchor),
             timeChunksStackView.trailingAnchor.constraint(equalTo: timeChunksScrollView.trailingAnchor),
          
-            timeChunksStackView.widthAnchor.constraint(equalTo: timeChunksScrollView.widthAnchor)
+            timeChunksStackView.widthAnchor.constraint(equalTo: timeChunksScrollView.widthAnchor),
+            
+            nextButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -11),
+            nextButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            nextButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
         ])
     }
 
