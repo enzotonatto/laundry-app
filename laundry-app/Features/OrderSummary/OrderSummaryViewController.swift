@@ -46,6 +46,17 @@ class OrderSummaryViewController: UIViewController, UITextFieldDelegate, Categor
         view.delegate = self
         return view
     }()
+    
+    lazy var schedulingSummary: CategorySummary = {
+        let view = CategorySummary()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.title = "Agendamento da coleta"
+        view.details = OrderFlowViewModel.shared.fullScheduling
+        view.delegate = self
+        return view
+    }()
+    
+    
 
     lazy var observation: ObservationTextField = {
         let obs = ObservationTextField()
@@ -67,6 +78,7 @@ class OrderSummaryViewController: UIViewController, UITextFieldDelegate, Categor
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Resumo do pedido"
+        navigationItem.backButtonTitle = "Voltar"
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = false
         
@@ -86,6 +98,8 @@ class OrderSummaryViewController: UIViewController, UITextFieldDelegate, Categor
         clothesSummary.details       = OrderFlowViewModel.shared.selectedClothes
         addressSummary.details       = OrderFlowViewModel.shared.pickupAddress
         paymentMethodSumary.details  = OrderFlowViewModel.shared.paymentMethod
+        schedulingSummary.details   = OrderFlowViewModel.shared.fullScheduling
+
     }
     
     @objc private func dismissKeyboard() {
@@ -160,7 +174,7 @@ extension OrderSummaryViewController: ViewCodeProtocol {
         view.addSubview(clothesSummary)
         view.addSubview(addressSummary)
         view.addSubview(paymentMethodSumary)
-        //view.addSubview(schedulingSummary)
+        view.addSubview(schedulingSummary)
         view.addSubview(observation)
         view.addSubview(finishOrderButton)
         view.addSubview(dividerLine)
@@ -187,11 +201,11 @@ extension OrderSummaryViewController: ViewCodeProtocol {
             paymentMethodSumary.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             paymentMethodSumary.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             
-//            schedulingSummary.topAnchor.constraint(equalTo: paymentMethodSumary.bottomAnchor, constant: 24),
-//            schedulingSummary.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-//            schedulingSummary.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            schedulingSummary.topAnchor.constraint(equalTo: paymentMethodSumary.bottomAnchor, constant: 24),
+            schedulingSummary.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            schedulingSummary.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             
-            observation.topAnchor.constraint(equalTo: paymentMethodSumary.bottomAnchor, constant: 24),
+            observation.topAnchor.constraint(equalTo: schedulingSummary.bottomAnchor, constant: 24),
             observation.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             observation.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             

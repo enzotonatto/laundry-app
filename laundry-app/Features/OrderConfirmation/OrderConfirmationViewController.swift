@@ -68,7 +68,6 @@ class OrderConfirmationViewController: UIViewController {
         navigationController?.popToRootViewController(animated: true)
     }
 
-    
     @objc func openWhatsApp() {
         guard let laundry = OrderFlowViewModel.shared.selectedLaundry else { return }
 
@@ -82,7 +81,11 @@ class OrderConfirmationViewController: UIViewController {
 
         📍 Endereço de coleta:
         \(OrderFlowViewModel.shared.pickupAddress)
-
+        
+        ⏰ Agendamento de coleta:
+        \(OrderFlowViewModel.shared.selectedDayMonth)/\(OrderFlowViewModel.shared.selectedMonth) - \(OrderFlowViewModel.shared.selectedDayWeek)
+        \(OrderFlowViewModel.shared.selectedTimeStart) - \(OrderFlowViewModel.shared.selectedTimeEnd)
+        
         💳 Método de pagamento:
         \(OrderFlowViewModel.shared.paymentMethod)
 

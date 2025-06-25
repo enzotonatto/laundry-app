@@ -43,13 +43,14 @@ final class PaymentMethodViewController: UIViewController {
         button.title = "Próximo"
         button.isShowingIcon = true
         button.isActive = false
-        button.addTarget(self, action: #selector(goToOrderSummaryVC), for: .touchUpInside)
+        button.addTarget(self, action: #selector(goToSchedulingVC), for: .touchUpInside)
         return button
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Método de pagamento"
+        navigationItem.backButtonTitle = "Voltar"
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.backButtonTitle = "Voltar"
@@ -57,12 +58,12 @@ final class PaymentMethodViewController: UIViewController {
         setupPaymentOptions()
         setup()
     }
-
-    @objc private func goToOrderSummaryVC() {
+    
+    @objc func goToSchedulingVC() {
         OrderFlowViewModel.shared.paymentMethod = selectedPaymentMethod
         navigationController?.setNavigationBarHidden(false, animated: false)
-        let orderSummaryVC = OrderSummaryViewController()
-        navigationController?.pushViewController(orderSummaryVC, animated: true)
+        let schedulingVC = CollectionSchedullingViewController()
+        navigationController?.pushViewController(schedulingVC, animated: true)
     }
 
     private func setupStackView() {

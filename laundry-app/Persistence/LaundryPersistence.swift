@@ -88,7 +88,7 @@ extension LaundryPersistence: LaundryPersistenceProtocol {
                 address: "Av. Paulista, 2000",
                 latitude: -23.5610,
                 longitude: -46.6560,
-                openHour: calendar.date(bySettingHour: 7, minute: 30, second: 0, of: now)!,
+                openHour: calendar.date(bySettingHour: 8, minute: 0, second: 0, of: now)!,
                 closeHour: calendar.date(bySettingHour: 22, minute: 0, second: 0, of: now)!,
                 details: "Lavagem premium e entrega express",
                 image: "laundryImage",

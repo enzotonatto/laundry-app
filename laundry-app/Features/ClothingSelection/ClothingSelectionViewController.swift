@@ -88,6 +88,7 @@ class ClothingSelectionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Peças"
+        navigationItem.backButtonTitle = "Voltar"
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.backButtonTitle = "Voltar"
