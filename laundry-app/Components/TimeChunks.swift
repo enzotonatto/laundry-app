@@ -84,7 +84,7 @@ class TimeChunks: UIButton{
         
         if selected {
             let innerCircle = UIView()
-            innerCircle.backgroundColor = .white
+            innerCircle.backgroundColor = .secondarySystemBackground
             innerCircle.layer.cornerRadius = 6
             innerCircle.translatesAutoresizingMaskIntoConstraints = false
             selectIcon.addSubview(innerCircle)

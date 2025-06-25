@@ -1,17 +1,50 @@
 {
   "images" : [
     {
-      "filename" : "903d8362-9c90-41a7-810c-87f60178b899.png",
+      "filename" : "Ilustra 1.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "903d8362-9c90-41a7-810c-87f60178b899 1.png",
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Ilustra Dark 1.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "Ilustra 1@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "903d8362-9c90-41a7-810c-87f60178b899 2.png",
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Ilustra Dark 1@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "Ilustra 1@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Ilustra Dark 1@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -8,6 +8,19 @@ class CollectionSchedullingViewController: UIViewController {
     private var laundry = OrderFlowViewModel.shared.selectedLaundry
     private var selectedChunk: String?
 
+    private lazy var progress: ProgressBar = {
+        let progressBar = ProgressBar()
+        progressBar.translatesAutoresizingMaskIntoConstraints = false
+        return progressBar
+    }()
+    
+    private lazy var dividerLine: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray4
+        return view
+    }()
+
     
     private lazy var currentLaundry: Laundry! = {
         let laundries = LaundryPersistence.shared.getAllLaundries()
@@ -240,15 +253,26 @@ extension CollectionSchedullingViewController: ViewCodeProtocol {
         view.addSubview(timeChunksScrollView)
         timeChunksScrollView.addSubview(timeChunksStackView)
         view.addSubview(nextButton)
+        view.addSubview(progress)
+        view.addSubview(dividerLine)
         
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            // Descrição
-            descriptionLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            dividerLine.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            dividerLine.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            dividerLine.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            dividerLine.heightAnchor.constraint(equalToConstant: 0.5),
+
+            descriptionLabel.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 16),
             descriptionLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             descriptionLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            
+            progress.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            progress.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            progress.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            progress.heightAnchor.constraint(equalToConstant: 4),
             
             daysStackView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 24),
             daysStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
@@ -273,6 +297,11 @@ extension CollectionSchedullingViewController: ViewCodeProtocol {
             nextButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             nextButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
         ])
+        progress.numberOfSteps = 4
+        progress.setStep(4, animated: false)
+    }
+    func avançouParaPasso(_ passo: Int) {
+        progress.setStep(passo, animated: true)
     }
 
 }
