@@ -91,7 +91,6 @@ class ClothingSelectionViewController: UIViewController {
         navigationItem.backButtonTitle = "Voltar"
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = false
-        navigationItem.backButtonTitle = "Voltar"
         setup()
         clothingSelectors.forEach { $0.delegate = self }
         checkCounts()
@@ -117,6 +116,12 @@ class ClothingSelectionViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: false)
         let addressVC = AddressViewController()
         navigationController?.pushViewController(addressVC, animated: true)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+      super.viewWillAppear(animated)
+      // força a barra de navegação visível
+      navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 }
 

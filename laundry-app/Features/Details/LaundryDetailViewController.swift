@@ -182,7 +182,7 @@ extension LaundryDetailViewController: ViewCodeProtocol {
     func setupConstraints() {
         NSLayoutConstraint.activate([
             returnButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            returnButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            returnButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             returnButton.widthAnchor.constraint(equalToConstant: 78),
             returnButton.heightAnchor.constraint(equalToConstant: 30),
             
