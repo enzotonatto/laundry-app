@@ -12,6 +12,13 @@ final class PaymentMethodViewController: UIViewController {
     private var paymentOptions: [PaymentOptionView] = []
     private var selectedPaymentMethod: String = ""
 
+    private lazy var progress: ProgressBar = {
+        let progressBar = ProgressBar()
+        progressBar.translatesAutoresizingMaskIntoConstraints = false
+        return progressBar
+    }()
+
+    
     private lazy var instructionsLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -71,19 +78,32 @@ final class PaymentMethodViewController: UIViewController {
         view.addSubview(instructionsLabel)
         view.addSubview(stackView)
         view.addSubview(nextButton)
+        view.addSubview(progress)
     }
 
     private func setupPaymentOptions() {
-        let moneyOption = PaymentOptionView(icon: UIImage(named: "moneyLarge"), title: "Dinheiro", isSelected: false)
-        let cardOption  = PaymentOptionView(icon: UIImage(named: "cardLarge"),  title: "Cartão",    isSelected: false)
-        let pixOption   = PaymentOptionView(icon: UIImage(named: "pixLarge"),   title: "Pix",       isSelected: false)
-
-        [moneyOption, cardOption, pixOption].forEach {
-            $0.delegate = self
-            paymentOptions.append($0)
-            stackView.addArrangedSubview($0)
+        guard let laundry = OrderFlowViewModel.shared.selectedLaundry else {
+            assertionFailure("selectedLaundry não foi definido antes de abrir PaymentMethodViewController")
+            return
+        }
+        
+        let methods = laundry.supportedPaymentMethods
+        
+        methods.forEach { method in
+            let iconName = "\(method.rawValue)Large"
+            let option = PaymentOptionView(
+                icon: UIImage(named: iconName),
+                title: method.displayName,
+                isSelected: false
+            )
+            option.delegate = self
+            paymentOptions.append(option)
+            stackView.addArrangedSubview(option)
         }
     }
+
+
+
 }
 
 extension PaymentMethodViewController: PaymentOptionViewDelegate {
@@ -105,8 +125,13 @@ extension PaymentMethodViewController: ViewCodeProtocol {
             dividerLine.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             dividerLine.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             dividerLine.heightAnchor.constraint(equalToConstant: 0.5),
+            
+            progress.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            progress.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            progress.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            progress.heightAnchor.constraint(equalToConstant: 4),
 
-            instructionsLabel.topAnchor.constraint(equalTo: dividerLine.bottomAnchor, constant: 16),
+            instructionsLabel.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 16),
             instructionsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             instructionsLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
 
@@ -118,5 +143,10 @@ extension PaymentMethodViewController: ViewCodeProtocol {
             nextButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             nextButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
+        progress.numberOfSteps = 4
+        progress.setStep(3, animated: false)
+    }
+    func avançouParaPasso(_ passo: Int) {
+        progress.setStep(passo, animated: true)
     }
 }

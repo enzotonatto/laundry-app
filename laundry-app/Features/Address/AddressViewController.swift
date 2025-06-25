@@ -2,6 +2,12 @@ import UIKit
 
 final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFieldDelegate {
     
+    private lazy var progress: ProgressBar = {
+        let progressBar = ProgressBar()
+        progressBar.translatesAutoresizingMaskIntoConstraints = false
+        return progressBar
+    }()
+    
     private lazy var labelAddress: UILabel = {
         let label = UILabel()
         label.text = "Preencha o endereço onde deseja que a coleta seja realizada"
@@ -154,12 +160,16 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
         navigationController?.pushViewController(paymentVC, animated: true)
     }
     
+    func avançouParaPasso(_ passo: Int) {
+        progress.setStep(passo, animated: true)
+    }
+    
     func addSubViews() {
         [
             dividerLine, labelAddress,
             cepComponent, logradouroComponent,
             cidadeComponent, numberComponent,
-            complementComponent, button
+            complementComponent, button, progress
         ].forEach(view.addSubview)
     }
     
@@ -170,9 +180,14 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
             dividerLine.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             dividerLine.heightAnchor.constraint(equalToConstant: 0.5),
             
-            labelAddress.topAnchor.constraint(equalTo: dividerLine.bottomAnchor, constant: 16),
+            labelAddress.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 16),
             labelAddress.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             labelAddress.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            progress.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            progress.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            progress.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            progress.heightAnchor.constraint(equalToConstant: 4),
             
             cepComponent.topAnchor.constraint(equalTo: labelAddress.bottomAnchor, constant: 16),
             cepComponent.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -199,6 +214,8 @@ final class AddressViewController: UIViewController, ViewCodeProtocol, UITextFie
             button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             button.heightAnchor.constraint(equalToConstant: 56)
         ])
+        progress.numberOfSteps = 4
+        progress.setStep(2, animated: false)
     }
 }
 

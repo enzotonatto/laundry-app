@@ -57,7 +57,7 @@ class ClothesCouting: UIView, UITextFieldDelegate {
         let button = UIButton()
         button.setImage(UIImage(systemName: "minus"), for: .normal)
         button.addTarget(self, action: #selector(didTapDecrement), for: .touchUpInside)
-        button.tintColor = .secondaryLabel
+        button.tintColor = .accent
         button.setTitleColor(.blue, for: .normal)
         return button
     }()
