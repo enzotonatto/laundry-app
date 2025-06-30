@@ -6,7 +6,7 @@
 //
 
 enum OrderSummarySection {
-    case clothes, address, payment
+    case clothes, address, payment, delivery
 }
 
 protocol CategorySummaryDelegate: AnyObject {

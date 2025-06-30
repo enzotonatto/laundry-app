@@ -52,6 +52,7 @@ class OrderSummaryViewController: UIViewController, UITextFieldDelegate, Categor
         view.translatesAutoresizingMaskIntoConstraints = false
         view.title = "Agendamento da coleta"
         view.details = OrderFlowViewModel.shared.fullScheduling
+        view.section = .delivery
         view.delegate = self
         return view
     }()
@@ -162,6 +163,11 @@ class OrderSummaryViewController: UIViewController, UITextFieldDelegate, Categor
             }
         case .payment:
             if let vc = navigationController?.viewControllers.first(where: { $0 is PaymentMethodViewController }) {
+                navigationController?.popToViewController(vc, animated: true)
+            }
+        case .delivery:
+            if let vc = navigationController?.viewControllers.first(where: { $0 is
+                CollectionSchedullingViewController  }) {
                 navigationController?.popToViewController(vc, animated: true)
             }
         }

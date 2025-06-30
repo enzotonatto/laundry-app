@@ -11,7 +11,7 @@ import UIKit
 class ObservationTextField: UIView {
     lazy var title: UILabel = {
         let label = UILabel()
-        label.text = "Observação"
+        label.text = "Observação (opcional)"
         label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = Fonts.title3
