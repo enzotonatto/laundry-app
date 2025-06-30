@@ -234,7 +234,7 @@ extension CollectionSchedullingViewController: TimeChunksViewDelegate {
         OrderFlowViewModel.shared.selectedTimeEnd   = endString
         
         let full = """
-        \(OrderFlowViewModel.shared.selectedDayMonth)/\(OrderFlowViewModel.shared.selectedMonth) - \(OrderFlowViewModel.shared.selectedDayWeek.capitalized)  (\(OrderFlowViewModel.shared.selectedTimeStart) - \(OrderFlowViewModel.shared.selectedTimeEnd))
+        \(OrderFlowViewModel.shared.selectedDayMonth)/\(OrderFlowViewModel.shared.selectedMonth) - \(OrderFlowViewModel.shared.selectedDayWeek.capitalized)  \(OrderFlowViewModel.shared.selectedTimeStart) - \(OrderFlowViewModel.shared.selectedTimeEnd)
         """
         
         OrderFlowViewModel.shared.fullScheduling = full

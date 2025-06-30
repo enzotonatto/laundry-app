@@ -122,7 +122,8 @@ extension OrderConfirmationViewController: ViewCodeProtocol {
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            imageBubble.widthAnchor.constraint(equalToConstant: 393),
+            imageBubble.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            imageBubble.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             imageBubble.heightAnchor.constraint(equalToConstant: 330),
             imageBubble.topAnchor.constraint(equalTo: view.topAnchor, constant: 200),
             imageBubble.centerXAnchor.constraint(equalTo: view.centerXAnchor),
